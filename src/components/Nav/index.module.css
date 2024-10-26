@@ -1,0 +1,111 @@
+.nav{
+    position: fixed;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 50px;
+    background-color:var(--semi-color-bg-0);
+    border-bottom: 1px solid var(--semi-color-border);
+    padding: 16px;
+    z-index: 999;       
+}
+
+.nav .left{
+    display: flex;
+    align-items: center; 
+    gap: 16px;
+}
+.nav .left .logo{
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    background: url('/public/vite.svg') no-repeat;
+    background-position: center center;
+}
+.nav .left .menuItem{
+    display: flex;
+    align-items: center;
+}
+
+.nav .left .menuItem .item{
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    cursor: pointer;
+    transition: all 0.2s linear;
+    font-weight: 700;
+}
+
+.nav .left .menuItem .item:hover{
+    color: #b948fb;
+}
+
+
+
+/* ------------------right ---------------------- */
+
+
+.nav  .right{
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    height: 40px;
+
+}
+
+
+.nav .search {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.nav .searchButton{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 60px;
+    height: 30px;
+    border-radius: 5px;
+    font-size: 14px;
+    background-color: #683df5;
+    transition: all 0.05s linear;
+    cursor: pointer;
+    color: #e0dede;
+
+}
+.nav .searchButton:hover{
+   
+    color: #fff;
+}
+
+.nav .searchInput{
+    border: none;
+    outline: none;
+    background-color: #24242450;
+    color: rgb(175, 177, 178);
+    font-size: 14px;
+    padding: 0 10px;
+    border-radius: 5px;
+}
+.nav .searchInput:focus{
+    outline:#683df5 solid 1px;
+}
+
+
+.mode{
+    width: 50px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 居中展示 */
+.lr{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%,-50%);
+}

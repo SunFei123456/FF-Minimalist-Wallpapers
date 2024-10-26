@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        /* 第一种方式 
+        使用flex 布局, 设置父容器为弹性盒模型, 设置子元素在x轴上的对齐方式为 center [居中], 设置子元素在y轴上的对齐方式为center [居中]
+        */
+        .father {
+            width: 100vw;
+            height: 100vh;
+            background-color: #7dee9b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .father .child {
+            width: 100px;
+            height: 100px;
+            background-color: rgb(4, 0, 255);
+        }
+
+        /* 第二种: 使用相对定位 + 绝对定位 + 位移 进行子元素位置 */
+        .father {
+            position: relative;
+            width: 50vw;
+            height: 50vh;
+            background-color: #7dee9b;
+        }
+
+        .father .child {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+
+            background-color: rgb(4, 0, 255);
+        }
+
+        /* 第三种 使用grid 布局 */
+        .father {
+            width: 100vw;
+            height: 100vh;
+            display: grid;
+            place-items: center;
+            background-color: #03a80e;
+        }
+
+        .father .child {
+            width: 100px;
+            height: 100px;
+            color: #fff;
+            background-color: rgb(4, 0, 255);
+            text-align: center;
+            line-height: 100px;
+        }
+    </style>
+
+
+</head>
+
+<body>
+    <div class="father">
+        <div class="child"></div>
+    </div>
+
+</body>
+
+</html>

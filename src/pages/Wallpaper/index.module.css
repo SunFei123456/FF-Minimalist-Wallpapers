@@ -1,0 +1,18 @@
+.wallpaper {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    justify-content: center;
+    margin: 0 auto;
+    gap: 16px;
+    width: 60%;
+    height: 300px;
+    /* border: #ccc solid 1px; */
+    padding: 16px;
+}
+
+.tabs {
+    display: flex;
+    gap: 16px;
+    background-color: #fff;
+}

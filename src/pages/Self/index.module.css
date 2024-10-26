@@ -1,0 +1,125 @@
+.self{
+    width: 100%;
+    height: 80vh;
+
+}
+
+.top{
+    width: 100%;
+    height: 250px;
+
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    padding: 50px 50px 30px 50px;
+
+}
+
+.userInfo{
+    display: flex;
+    color: #fff;
+
+}
+
+.userInfo span{
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.operate{
+    display: flex;
+    align-items: center;
+    gap: 60px;
+    width: 100%;
+    height: 50px;
+    padding: 0  70px;
+    border-bottom: 1px solid #23232323;
+}
+.operate span{
+    box-sizing: border-box;
+    display: block;
+    height: 30px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.5s ease; 
+}
+.operate span:hover{
+    color: #683df5;
+}
+/* 伪元素, 下划线 */
+.active{
+    color: #683df5;
+    border-bottom: 3px solid #683df5;
+}
+
+
+
+.content{
+    padding: 1rem;
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-wrap: wrap;
+    padding: 16px;
+    padding-left: 60px;
+    gap: 30px;
+}
+
+
+
+.imagecard {
+    width: 22.5%;
+    height: auto;
+    cursor: pointer;
+    display: inline-block;
+    margin: 0px; /* 添加一些间距 */
+    box-sizing: border-box; /* 确保padding和border不影响宽度计算 */
+}
+
+.imagecard img {
+    width: 100%;
+    height: auto; /* 移除固定高度 */
+    border-radius: 10px;
+    object-fit: cover; /* 使用cover来保持图片比例 */
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    transition: all 0.5s ease;
+    display: block; /* 确保图片块元素特性 */
+    aspect-ratio: 4/3; /* 可以设置一个固定比例，比如4:3 */
+}
+
+
+.imagecard:hover img{
+    filter: contrast(120%);
+    transition: 0.5s;
+}
+
+.uploadBgImageBox{
+    position: absolute;
+    right: 40px;
+    top: 60px;
+}
+
+.uploadBgImage{
+   
+    width: 30px;
+    height: 30px;
+    color: #fff;
+    border-radius: 50%;
+    background-color: #683df5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.5s ease;
+}
+
+.uploadBgImage:hover{
+    background-color:  #3f09f1;
+    transition: 0.5s;
+}
