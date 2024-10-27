@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@douyinfe/semi-icons": "^2.58.0",
-    "@douyinfe/semi-ui": "^2.58.0",
+    "@douyinfe/semi-ui": "^v2.62.0",
     "animate.css": "^4.1.1",
     "axios": "^1.7.1",
     "events": "^3.3.0",

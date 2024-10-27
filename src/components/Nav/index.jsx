@@ -121,18 +121,6 @@ export default function Nav({ onLanguageChange }) {
 
         {/* 右边部分 */}
         <div className={NavStyle.right}>
-          <div className={NavStyle.search}>
-            {/* 定义input 的value */}
-            <Input
-              prefix={<IconSearch />}
-              placeholder="搜索"
-              value={keyword}
-              onChange={(value) => setKeyword(value)}
-            ></Input>
-            <div className={NavStyle.searchButton} onClick={() => search()}>
-              搜索
-            </div>
-          </div>
 
           {/* 暗黑亮白模式切换 */}
           <div className={NavStyle.mode}>

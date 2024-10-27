@@ -177,28 +177,20 @@ export default function Self() {
           {/* 用户头像 */}
           <Avatar
             size="extra-large"
-            color="red"
             style={{ margin: 4 }}
             alt="User"
             src={userInfo.user_avatar}
           ></Avatar>
+          {/* 个人nickname */}
+          <Title heading={4} style={{ margin: "8px 0", color: "#fff" }}>
+            {userInfo.user_nickname || "暂无昵称"}
+          </Title>
 
           {/* 用户信息 */}
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              marginLeft: "20px",
-            }}
-          >
+          <div className={SelfStyle.userInfoDetail}>
             {" "}
-            {/* 个人nickname */}
-            <Title heading={4} style={{ margin: "8px 0", color: "#fff" }}>
-              {userInfo.user_nickname || "暂无昵称"}
-            </Title>
             {/* 账号流量信息 */}
-            <div style={{ display: "flex", gap: "10px" }}>
+            <div style={{ display: "flex", gap: "10px", color: "#fff" }}>
               <div style={{ margin: "3px 6px" }}>
                 关注 <span>{followCount.following_count}</span>
               </div>
@@ -210,7 +202,7 @@ export default function Self() {
               </div>
             </div>
             {/* 基本个人信息 */}
-            <div style={{ display: "flex", gap: "10px" }}>
+            <div style={{ display: "flex", gap: "10px", color: "#fff" }}>
               {/* 账号 */}
               <div style={{ margin: "3px 6px" }}>
                 <Tag
@@ -253,7 +245,7 @@ export default function Self() {
               </div>
             </div>
             {/* 个人介绍 */}
-            <div style={{ fontSize: 13, margin: "3px 2px" }}>
+            <div style={{ fontSize: 13, color: "#fff" }}>
               {userInfo.user_description || "暂无介绍"}
             </div>
           </div>
@@ -282,7 +274,7 @@ export default function Self() {
           }}
           className={activeStyle === "1" ? SelfStyle.active : ""}
         >
-          上传 {myUploadsimageList.length}
+          上传 {myUploadsimageList ? myUploadsimageList.length : 0}
         </span>
         <span
           onClick={() => {
@@ -290,7 +282,7 @@ export default function Self() {
           }}
           className={activeStyle === "2" ? SelfStyle.active : ""}
         >
-          喜欢 {myLikesimageList.length}
+          喜欢 {myLikesimageList ? myLikesimageList.length : 0}
         </span>
         <span
           onClick={() => {
@@ -298,23 +290,23 @@ export default function Self() {
           }}
           className={activeStyle === "3" ? SelfStyle.active : ""}
         >
-          收藏 {myCollectsimageList.length}
+          收藏 {myCollectsimageList ? myCollectsimageList.length : 0}
         </span>
         <span>浏览历史</span>
       </div>
 
       {/* 下半部分  用户作品 */}
-
       <div className={SelfStyle.content}>
         {/* 我的上传模块 */}
         {activeKey == "上传" &&
+          Array.isArray(myUploadsimageList) &&
           myUploadsimageList.map((item) => (
             <div
               key={item.image_id}
               className={SelfStyle.imagecard}
               onClick={() => goTodetail(item.image_id)}
             >
-              <img src={item.image_url} alt=""  />
+              <img src={item.image_url} alt="" />
               <p>{item.image_description}</p>
               <Space>
                 <IconCalendar /> <p>{item.image_upload_time}</p>
@@ -346,7 +338,6 @@ export default function Self() {
             </div>
           ))}
       </div>
-      <IconImage />
 
       <UpdateUserInfoForm
         visible={isModalVisible}
@@ -354,6 +345,7 @@ export default function Self() {
         onCancel={hideModal}
         afterClose={() => console.log("After Close callback executed")}
       />
+      {/* 壁纸更换 */}
       <Upload
         action={action}
         fileName="file"

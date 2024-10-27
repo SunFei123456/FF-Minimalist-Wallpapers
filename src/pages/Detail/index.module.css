@@ -1,11 +1,29 @@
 .detail {
-    padding-top: 50px;
+    padding: 16px;
+    padding-top: 80px;
     width: 100%;
     height: 90vh;
     display: flex;
-    justify-content: center;
-    align-items: start;
+    justify-content:center;
     gap: 16px;
+}
+.left{
+    display: flex;
+    flex-direction: column;
+}
+.imageContainer{
+     width: 700px;
+}
+.imageContainer img{
+    width: 100%;
+}
+
+.operationBar{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 16px;
 }
 
 
@@ -51,72 +69,37 @@
     font-size: 13px;
     color: gray;
 }
-.publisher_desc{
-    font-weight:400 ;
-    margin-left: 10px;
-}
-.publisher_desc{
-    font-weight:400 ;
-    margin-left: 10px;
-}
-.publisher_desc{
-    font-weight:400 ;
-    margin-left: 10px;
-}
 
 .userName{
     font-size: 24px;
     font-weight: 600;
 }
 
-.userName{
-    font-size: 18px;
-    font-weight: 400;
-}
-
-.userName{
-    font-size: 16px;
-    font-weight: 400;
-}
-
-.userName{
-    font-size: 24px;
-    font-weight: 600;
-}
-
-.userName{
-    font-size: 18px;
-    font-weight: 400;
-}
-
-.userName{
-    font-size: 16px;
-    font-weight: 400;
-}
-
-.userName{
-    font-size: 20px;
-    font-weight: 600;
-}
-
-.userName{
-    font-size: 16px;
-    font-weight: 400;
-}
-
-.userName{
-    font-size: 16px;
-    font-weight: 400;
-}
 
 /* 小屏幕显示 */
 @media screen and (max-width: 768px) {
     .detail {
+        justify-content: start;
         flex-direction: column;
-        align-items: center;
     }
-    .right{
-        max-width:85%;
+    .imageContainer{
+        max-width:100%;
         width: 100%;
+    }
+    .operationBar{
+        gap: 1.25rem;
+        flex-wrap: wrap;   
+    }
+
+    /* 用户信息 */
+    .userInfo{
+        margin: 20px 0;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .userInfo .publisher{
+        width: 50px;
+        height: 50px;
     }
 }

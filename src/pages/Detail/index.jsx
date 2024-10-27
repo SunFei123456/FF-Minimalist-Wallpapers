@@ -53,9 +53,9 @@ export default function Detail() {
   const getDataByid = async () => {
     getDetail(id).then((res) => {
       setPicDetail(res);
-      console.log("picDetail:",res);
+      console.log("picDetail:", res);
       get_user_info(res.author).then((res) => {
-        console.log("Image_Creator:",res);
+        console.log("Image_Creator:", res);
         setUserCurrentInfo(res);
       });
       likePicActived(res.author, res.id);
@@ -216,25 +216,15 @@ export default function Detail() {
     <>
       <div className={DetailStyle.detail}>
         {/* 左边图片 */}
-        <div>
+        <div className={DetailStyle.left}>
           {/* 图片 */}
-          <Card
-            className={DetailStyle.left}
-            style={{ maxWidth: 700 }}
-            cover={<Image width={600} src={picDetail.url} />}
-          >
-            <Meta title={picDetail.name} />
-          </Card>
+          <div className={DetailStyle.imageContainer}>
+            <img src={picDetail.url} alt="" />
+            <br />
+            <span>{picDetail.name}</span>
+          </div>
           {/* 操作栏, 包含喜欢, 收藏, 下载 ,以及下载按钮*/}
-
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginTop: "10px",
-            }}
-          >
+          <div className={DetailStyle.operationBar}>
             <Space align="center">
               <Tag
                 size="large"

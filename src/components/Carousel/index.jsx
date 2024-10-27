@@ -7,8 +7,7 @@ export default function LunboTu ()  {
     const style = {
         width: '100%',
         height:'600px',
-        // scale
-    
+
         // height: '600px',
     };
 
@@ -45,7 +44,7 @@ export default function LunboTu ()  {
     ];
 
     return (
-        <Carousel style={style} theme='light'>
+        <Carousel style={style}>
             {
                 imgList.map((src, index) => {
                     return (
