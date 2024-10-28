@@ -113,9 +113,9 @@ export default function Nav({ onLanguageChange }) {
             >
               壁纸
             </div>
-            <div className={NavStyle.item}>标签</div>
-            <div className={NavStyle.item}>归档</div>
-            <div className={NavStyle.item}>关于</div>
+            <div className={NavStyle.item} onClick={()=>menuClick('/plaza')}>广场</div>
+            <div className={NavStyle.item} onClick={()=>menuClick('/archive')}>归档</div>
+            <div className={NavStyle.item} onClick={()=>menuClick('/about')}>关于</div>
           </div>
         </div>
 

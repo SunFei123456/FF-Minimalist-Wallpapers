@@ -8,6 +8,9 @@ import { createBrowserRouter } from "react-router-dom";
 import UploadWallpaper from "@/pages/Upload";
 
 import Self from "@/pages/Self";
+import Plaza from "@/pages/Plaza";
+import Archive from "@/pages/Archive";
+import About from "@/pages/About";
 
 const router = createBrowserRouter([
   {
@@ -24,10 +27,17 @@ const router = createBrowserRouter([
       // 上传成功之后的页面
       // { path: "/upload/success", element: <uploadSuccess /> },
       { path: "/user/:id", element: <Self /> },
+
+      // 广场
+      { path: "/plaza", element: <Plaza /> },
+
+      // 归档
+      { path: "/archive", element: <Archive /> },
+
+      // 关于
+      { path: "/about", element: <About /> },
     ],
   },
 ]);
 
 export default router;
-
-
