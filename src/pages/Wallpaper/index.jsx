@@ -1,12 +1,13 @@
 import { IconSearch } from "@douyinfe/semi-icons";
 import React from "react";
 import WallpaperStyle from "./index.module.css";
-import { Input,Typography, Tag, Card,  Badge} from "@douyinfe/semi-ui";
+import { Input, Typography, Tag, Card, Badge } from "@douyinfe/semi-ui";
 import Waterfall from "@/components/Waterfall";
 import { getAllTags } from "@/apis/tag";
 import { getHot20, getTags } from "@/apis/wallpaper";
 import { useEffect, useState } from "react";
 import eventBus from "@/eventBus";
+import ConnectionRefused from "@/components/Error/ConnectionRefused/Connection_refused";
 export default function Wallpaper() {
   const { Title } = Typography;
   // 定义存储标签的state
@@ -59,47 +60,48 @@ export default function Wallpaper() {
 
   return (
     <>
-      {/* top 上方区域 */}
-      <div className={WallpaperStyle.wallpaper}>
-        <div className={WallpaperStyle.title}>
-          极简壁纸,高质量壁纸库,快速定位你的需要
-        </div>
-        <Input
-          suffix={<IconSearch />}
-          placeholder="搜索壁纸"
-          size="large"
-          showClear
-        ></Input>
-      </div>
       {/* 操作栏 */}
       {/* // center 中间区域 */}
-      <Card>
-        <div className={WallpaperStyle.tabs}>
-          {tags.map((item, index) => (
-            <Badge count={5} theme="light" >
-              <Tag
-                size="large"
-                shape="circle"
-                color='violet'
-                key={item.id}
-                onClick={() => {
-                  DisplayImagesUnderDifferentTabs(item.name);
-                }}
-              >
-                {item.name}
-              </Tag>
-            </Badge>
-          ))}
-        </div>
-        {/* 等数据回来之后,再渲染下面的组件, */}
-        {/* ,没有数据的时候渲染一段文本 */}
-        {!images && (
-          <div>
-            <span>壁纸正在路上...</span>
+      {tags.length > 0 ? (
+        <>
+          {/* top 上方区域 */}
+          <div className={WallpaperStyle.wallpaper}>
+            <div className={WallpaperStyle.title}>
+              极简壁纸,高质量壁纸库,快速定位你的需要
+            </div>
+            <Input
+              suffix={<IconSearch />}
+              placeholder="搜索壁纸"
+              size="large"
+              showClear
+            ></Input>
           </div>
-        )}
-        {images && <Waterfall images={images}></Waterfall>}
-      </Card>
+          <Card>
+            <div className={WallpaperStyle.tabs}>
+              {tags.map((item, index) => (
+                <Badge count={5} theme="light">
+                  <Tag
+                    size="large"
+                    shape="circle"
+                    color="violet"
+                    key={item.id}
+                    onClick={() => {
+                      DisplayImagesUnderDifferentTabs(item.name);
+                    }}
+                  >
+                    {item.name}
+                  </Tag>
+                </Badge>
+              ))}
+            </div>
+            {images && <Waterfall images={images}></Waterfall>}
+          </Card>
+        </>
+      ) : (
+        <div>
+          <ConnectionRefused></ConnectionRefused>
+        </div>
+      )}
     </>
   );
 }

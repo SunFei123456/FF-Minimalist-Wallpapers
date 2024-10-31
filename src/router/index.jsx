@@ -8,9 +8,10 @@ import { createBrowserRouter } from "react-router-dom";
 import UploadWallpaper from "@/pages/Upload";
 
 import Self from "@/pages/Self";
-import Plaza from "@/pages/Plaza";
+import Plaza from "@/pages/Plaza/index.jsx";
 import Archive from "@/pages/Archive";
 import About from "@/pages/About";
+import NotFound from "@/components/Error/NotFound";
 
 const router = createBrowserRouter([
   {
@@ -36,6 +37,9 @@ const router = createBrowserRouter([
 
       // 关于
       { path: "/about", element: <About /> },
+
+      // 404
+      { path: "*", element: <NotFound/> },
     ],
   },
 ]);

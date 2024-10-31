@@ -89,6 +89,8 @@ export default function Nav({ onLanguageChange }) {
     });
     // 清空localStorage中的用户信息
     localStorage.removeItem("userInfo");
+    // 清除localStorage中的token
+    localStorage.removeItem("token");
     Toast("退出成功");
   };
   // console.log(userInfo.image); // 应该输出 null

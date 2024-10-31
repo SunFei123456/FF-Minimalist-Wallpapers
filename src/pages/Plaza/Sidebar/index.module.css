@@ -1,0 +1,35 @@
+/* 粘性布局 */
+.card {
+  width: 250px;
+  background: var(--semi-color-bg-1);
+  position: sticky;
+  top: 50px;
+  display: flex;
+  flex-direction: column;
+}
+.top{
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+.top .uinfo{
+  display: flex;  
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+
+.bottom{
+  margin-top: 1rem;
+  margin-left: .625rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.25rem;
+}
+
+.bottom .stat{
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+}

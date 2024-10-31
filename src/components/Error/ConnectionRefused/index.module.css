@@ -1,0 +1,87 @@
+.container {
+    min-height: 100vh;
+    background: var(--semi-color-bg-0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+  
+  .content {
+    max-width: 42rem;
+    width: 100%;
+  }
+  
+  .card {
+    padding: 2rem !important;
+  }
+  
+  @media (min-width: 768px) {
+    .card {
+      padding: 3rem !important;
+    }
+  }
+  
+  .iconWrapper {
+    position: relative;
+    width: 96px;
+    height: 96px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--semi-color-danger-light-default);
+    border-radius: 50%;
+  }
+  
+  .serverIcon {
+    color: var(--semi-color-danger);
+    font-size: 48px !important;
+  }
+  
+  .crossLine {
+    position: absolute;
+    width: 100%;
+    height: 3px;
+    background: var(--semi-color-danger);
+    transform: rotate(-45deg);
+  }
+  
+  .description {
+    max-width: 28rem;
+    text-align: center;
+    margin-top: 0.5rem;
+  }
+  
+  .statusCard {
+    width: 100%;
+    background: var(--semi-color-bg-1) !important;
+  }
+  
+  .statusGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  @media (min-width: 768px) {
+    .statusGrid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  
+  .status {
+    margin-top: 0.5rem;
+  }
+  
+  .troubleshooting {
+    width: 100%;
+    border-top: 1px solid var(--semi-color-border);
+    padding-top: 1.5rem;
+  }
+  
+  .listItem {
+    display: flex !important;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.5rem 0 !important;
+  }

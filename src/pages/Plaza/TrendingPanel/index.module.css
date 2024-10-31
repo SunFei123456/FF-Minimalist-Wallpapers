@@ -1,0 +1,29 @@
+.container {
+    position: sticky;
+    top: 50px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .card {
+    background: var(--semi-color-bg-1);
+  }
+  
+  .trendItem {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.75rem 0;
+  }
+  
+  .suggestionItem {
+    padding: 0.75rem 0;
+  }
+  
+  .avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 9999px;
+    object-fit: cover;
+  }

@@ -1,8 +1,24 @@
-import React from 'react'
-import PlazaStyle from './index.module.css'
+import React from 'react';
+import { Layout } from '@douyinfe/semi-ui';
+import Sidebar from './Sidebar';
+import PostList from './PostList/index';
+import TrendingPanel from './TrendingPanel/index';
+import styles from './index.module.css';
 
-export default function Plaza() {
+const Feed = () => {
   return (
-    <div className={PlazaStyle.plaza}>广场</div>
-  )
-}
+    <Layout className={styles.layout}>
+      <Layout.Sider className={styles.sider}>
+        <Sidebar />
+      </Layout.Sider>
+      <Layout.Content className={styles.content}>
+        <PostList />
+      </Layout.Content>
+      <Layout.Sider className={styles.trendingSider}>
+        <TrendingPanel />
+      </Layout.Sider>
+    </Layout>
+  );
+};
+
+export default Feed;

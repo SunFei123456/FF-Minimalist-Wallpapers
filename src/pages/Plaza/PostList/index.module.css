@@ -1,0 +1,269 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  
+}
+
+.createPost {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1rem;
+  margin-bottom: 16px;
+  padding-bottom: 5px;
+}
+
+.createPost {
+  margin-top: 16px;
+}
+
+.inputWrapper {
+  position: relative;
+}
+.topicTag{
+  cursor: pointer;
+  margin-top: 10px;
+  margin-right: 8px;
+}
+
+.postInput {
+  width: 100%;
+  border: none;
+  background: none;
+  outline: none;
+  font-size: 16px;
+  padding: 12px 0;
+  resize: none;
+  color: var(--semi-color-text-0);
+}
+
+.imagePreviewArea {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.imagePreviewItem {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.imagePreviewItem img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.removeButton {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  padding: 4px;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+}
+
+.removeButton:hover {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.removeButton svg {
+  color: white;
+}
+
+.bottomAction {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 12px;
+  border-top: 1px solid var(--semi-color-border);
+}
+
+.leftActions {
+  display: flex;
+  gap: 8px;
+}
+
+.rightActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.topicSelector {
+  position: relative;
+}
+
+.topicDropdown {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+  margin-bottom: 8px;
+  z-index: 1000;
+}
+
+.topicOption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+}
+
+.topicLabel {
+  font-size: 14px;
+}
+
+.hotTag {
+  margin-left: 5px;
+  background-color: #ff8f0026;
+  color: #ff8f00;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+}
+
+.charCount, .imageCount {
+  font-size: 14px;
+}
+
+.postButton {
+  min-width: 80px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.post {
+  padding: 1rem;
+}
+
+.postMain {
+  width: 100%;
+  
+}
+
+.postContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.content {
+  white-space: pre-wrap;
+}
+
+.ImageContainer{
+  width: 100%;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: space-seven;
+  align-items: center;
+}
+
+.postImage {
+  width: 28%;
+  object-fit: cover;
+  border-radius: 1rem;
+  margin-top: 0.5rem;
+}
+
+.actions {
+  margin-top: 0.5rem;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.actions button {
+  padding: 0.5rem;
+  border-radius: 9999px;
+  transition: all 0.2s ease;
+}
+
+.activeButton {
+  color: var(--semi-color-primary) !important;
+  background-color: var(--semi-color-primary-light-default) !important;
+}
+
+.commentsSection {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--semi-color-border);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.addComment {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.commentInput {
+  flex: 1;
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+}
+
+.commentInput :global(.semi-input-textarea) {
+  flex: 1;
+  background: var(--semi-color-bg-1);
+  border-radius: 1rem;
+}
+
+.sendButton {
+  padding: 0.5rem;
+  border-radius: 9999px;
+}
+
+.commentList {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.comment {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+}
+
+.commentContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,165 @@
+.container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--semi-color-bg-0) 0%, var(--semi-color-bg-1) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+  }
+  
+  .content {
+    max-width: 32rem;
+    width: 100%;
+    text-align: center;
+  }
+  
+  .illustrationContainer {
+    position: relative;
+    height: 200px;
+    margin-bottom: 2rem;
+  }
+  
+  .compass {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  .compassIcon {
+    color: var(--semi-color-primary);
+    animation: spin 10s linear infinite;
+  }
+  
+  .numbers {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    font-size: 8rem;
+    font-weight: 800;
+    color: var(--semi-color-text-2);
+    opacity: 0.1;
+    user-select: none;
+  }
+  
+  .four {
+    animation: bounce 2s ease-in-out infinite;
+  }
+  
+  .four:last-child {
+    animation-delay: 0.2s;
+  }
+  
+  .zero {
+    animation: pulse 2s ease-in-out infinite;
+  }
+  
+  .title {
+    margin: 0 !important;
+    background: linear-gradient(135deg, var(--semi-color-primary) 0%, var(--semi-color-secondary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: fadeIn 0.5s ease-out;
+  }
+  
+  .subtitle {
+    font-size: 1.125rem !important;
+    max-width: 24rem;
+    margin: 0 auto;
+    animation: fadeIn 0.5s ease-out 0.2s backwards;
+  }
+  
+  .suggestions {
+    margin: 2rem 0;
+    animation: fadeIn 0.5s ease-out 0.4s backwards;
+  }
+  
+  .suggestionList {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0 0;
+    color: var(--semi-color-text-2);
+  }
+  
+  .suggestionList li {
+    margin: 0.5rem 0;
+  }
+  
+  .actions {
+    animation: fadeIn 0.5s ease-out 0.6s backwards;
+  }
+  
+  .primaryButton {
+    transition: transform 0.2s ease;
+  }
+  
+  .primaryButton:hover {
+    transform: translateY(-2px);
+  }
+  
+  .secondaryButton {
+    transition: background-color 0.2s ease;
+  }
+  
+  @keyframes float {
+    0%, 100% {
+      transform: translate(-50%, -50%);
+    }
+    50% {
+      transform: translate(-50%, -60%);
+    }
+  }
+  
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  @keyframes bounce {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+  
+  @keyframes pulse {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(0.95);
+    }
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @media (max-width: 640px) {
+    .numbers {
+      font-size: 6rem;
+    }
+    
+    .actions {
+      flex-direction: column;
+      gap: 1rem;
+    }
+    
+    .actions button {
+      width: 100%;
+    }
+  }

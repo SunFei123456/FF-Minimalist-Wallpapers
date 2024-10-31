@@ -14,6 +14,7 @@ export default function LoginAndRegisterPane({visible,hideModal}) {
     login(values.email,values.password).then((res)=>{
       if (res.code == 200) {
         Toast.success('登录成功');
+        localStorage.setItem('token',res.access_token);
         setUserInfo(res.data)
         hideModal();
       }
