@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, forwardRef } from "react";
+import { useNavigate} from 'react-router-dom'
 import {
   Card,
   Avatar,
@@ -10,6 +11,7 @@ import {
   Upload,
   Dropdown,
   Toast,
+  AvatarGroup,
 } from "@douyinfe/semi-ui";
 import {
   IconLikeThumb,
@@ -20,12 +22,22 @@ import {
   IconImageStroked,
   IconHash,
   IconClose,
+  IconDelete,
 } from "@douyinfe/semi-icons";
-import { get, create } from "@/apis/post";
+import {
+  get,
+  create,
+  likeOrCancelLike,
+  getComments,
+  createComment,
+  deletePost, 
+  deleteComment
+} from "@/apis/post";
 import styles from "./index.module.css";
 import { useRef } from "react";
 import { Tag } from "@douyinfe/semi-ui";
-import { getUserId } from "@/utils";
+import { getUserId, getUserAvatar } from "@/utils";
+import ConfettiExplosion from "react-confetti-explosion";
 
 const { Text } = Typography;
 
@@ -45,7 +57,7 @@ const PostList = () => {
     <div className={styles.container}>
       <CreatePost getPost={getPost} />
       {Array.isArray(postList) &&
-        postList.map((post) => <Post key={post.id} {...post} />)}
+        postList.map((post) => <Post key={post.id} getPost={getPost} {...post} />)}
     </div>
   );
 };
@@ -275,21 +287,155 @@ const CreatePost = ({ getPost }) => {
   );
 };
 
+const mediumProps = {
+  force: 0.6,
+  duration: 2500,
+  particleCount: 100,
+  width: 500,
+  colors: ["#9A0023", "#FF003C", "#AF739B", "#FAC7F3", "#F7DBF4"],
+};
 // three
-const Post = ({ user, content, likes, comments, images }) => {
+const Post = ({ id, user, content, likes, comments, images,getPost }) => {
   const [showComments, setShowComments] = useState(false);
   const [newComment, setNewComment] = useState("");
+  // 点赞的状态,用于及时更新点赞数量, 默认状态为数据库返回的结果比对
+  const [isLiked, setLiked] = useState(
+    likes.some((like) => like.user_id === getUserId())
+  );
+  // 点赞的数量,默认为数据库返回的likes 的长度
+  const [likeCount, setLikeCount] = useState(likes.length);
+  // 评论的数量,默认为数据库返回的comments 的长度
+  const [commentCount, setCommentCount] = useState(comments.length);
+  // 评论的列表
+  const [commentsV1, setCommentsV1] = useState([]);
 
-  const handleCommentSubmit = () => {
+  // 回复的状态
+  const [replyingTo, setReplyingTo] = useState(null);
+  const [replyContent, setReplyContent] = useState("");
+  // 触发糖果动画的变量
+  const [isShowConfetti, setIsShowConfetti] = useState(false);
+  const handleCommentSubmit = async () => {
     if (newComment.trim()) {
-      // In a real app, this would make an API call
-      setNewComment("");
+      // 发送评论请求
+      try {
+        const res = await createComment({
+          content: newComment,
+          user_id: getUserId(),
+          post_id: id,
+        });
+        if (res.code === 200) {
+          // 更新评论数量
+          setCommentCount((prevCount) => prevCount + 1);
+          // 更新评论列表
+          setCommentsV1((prevComments) => [...prevComments, res.data]);
+          // 清空评论输入框
+          setNewComment("");
+          // 关闭评论区
+          setShowComments(false);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    } else {
+      Toast.info("评论内容不能为空");
+      return;
     }
   };
+
+  // 点赞or取消点赞
+  const changeLikeStatus = async () => {
+    setIsShowConfetti(!isShowConfetti);
+    // 发送请求
+    try {
+      const res = await likeOrCancelLike(getUserId(), id);
+      if (res.code === 200) {
+        // 更新点赞数量
+        setLikeCount((prevCount) => (isLiked ? prevCount - 1 : prevCount + 1));
+        // 更新点赞状态
+        setLiked(!isLiked);
+        // 重新请求
+        getPost();
+        
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  //  获取帖子下的评论并进行展示
+  const fetchAndShowComments = async (post_id) => {
+    if (!post_id) return;
+    const res = await getComments(post_id);
+    await setCommentsV1(res.data);
+    await setShowComments(!showComments);
+  };
+
+
+  // 点击回复底部输入框展示
+  const handleReplyClick = (commentId) => {
+    setReplyingTo(replyingTo === commentId ? null : commentId);
+    setReplyContent("");
+  };
+  // 二级回复
+  const handleReplySubmit = async (post_id, commentId) => {
+    if (!replyContent.trim()) return;
+    const res = await createComment({
+      content: replyContent,
+      user_id: getUserId(),
+      post_id: post_id,
+      parent_id: commentId,
+    });
+    if (res.code === 200) {
+      getCommentsByPostId(post_id);
+      setReplyContent("");
+      setReplyingTo(null);
+    }
+  };
+  // 定义一个方法, 获取某个帖子的最新评论
+  const getCommentsByPostId = async (post_id) => {
+    const res = await getComments(post_id);
+    if (res.code === 200) {
+      setCommentsV1(res.data);
+    }
+  };
+  // 删除帖子
+  const postDel = async (post_id) => {
+    const res = await deletePost(post_id);
+    if (res.code === 200) {
+      Toast.success("删除成功");
+      // 从帖子列表中删除该帖子
+      getPost();
+    } else {
+      Toast.error("删除失败");
+    }
+  }
+  // 删除评论
+  const commentDel = async (comment_id) => {
+    const res = await deleteComment(comment_id);
+    if (res.code === 200) {
+      Toast.success("删除成功");
+      // 从评论列表中删除该评论
+      getCommentsByPostId(id);
+    } else {
+      Toast.error("删除失败");
+    }
+  }
+
+
+  const setReplyingToAndToggle = (commentId) => {
+    setReplyingTo(replyingTo === commentId ? null : commentId);
+    setShowComments(true);
+  };
+  // 跳转用户页面
+  const navigate = useNavigate();
+  const goToUserPage = (user_id) => {
+    navigate(`/user/${user_id}`);
+  }
+
   return (
     <Card className={styles.post}>
       <Space align="start" className={styles.postMain}>
-        <Avatar src={user.image} />
+        <Avatar src={user.image} onClick={()=> goToUserPage(user.id)} />
         <div className={styles.postContent}>
           {/* user info */}
           <Space>
@@ -317,35 +463,68 @@ const Post = ({ user, content, likes, comments, images }) => {
           {/* post actions */}
           <Space className={styles.actions}>
             {/* like */}
-            <Button icon={<IconLikeThumb />} type="tertiary" theme="borderless">
-              {likes.length}
+            <Button
+              // like--> [] 中 是否包含当前用户的id
+              icon={
+                <IconLikeThumb
+                  style={{
+                    color: isLiked ? "red" : "",
+                  }}
+                />
+              }
+              type="tertiary"
+              theme="borderless"
+              onClick={changeLikeStatus}
+            >
+              {likeCount}
             </Button>
             {/* comment */}
             <Button
               icon={<IconComment />}
               type="tertiary"
               theme="borderless"
-              onClick={() => setShowComments(!showComments)}
+              onClick={() => fetchAndShowComments(id)}
               className={showComments ? styles.activeButton : ""}
             >
-              {comments.length}
+              {commentCount}
             </Button>
-            {/* forward */}
-            <Button icon={<IconForward />} type="tertiary" theme="borderless" />
             {/* favorite */}
             <Button
               icon={<IconBookmark />}
               type="tertiary"
               theme="borderless"
             />
+            {/* 删除 */}
+            {user.id === getUserId() && (
+              <Button
+                icon={<IconDelete />}
+                type="tertiary"
+                theme="borderless"
+                onClick={()=>postDel(id)}
+              />
+            )}
           </Space>
+        </div>
+        <div className={styles.avatarGroup}>
+          {likes.length > 0 && (
+            <AvatarGroup size="small" maxCount={5}   >
+              {likes.map((like) => (
+                <Avatar
+                  key={like.user_id}
+                  size="small"
+                  src={like && like.user.image}
+                />
+              ))}
+            </AvatarGroup>
+          )}
         </div>
       </Space>
 
       {showComments && (
         <div className={styles.commentsSection}>
+          {/* 发布评论  */}
           <div className={styles.addComment}>
-            <Avatar size="small" src={user.image} />
+            <Avatar size="small" src={getUserAvatar()} />
             <div className={styles.commentInput}>
               <TextArea
                 placeholder="Write a comment..."
@@ -353,6 +532,7 @@ const Post = ({ user, content, likes, comments, images }) => {
                 onChange={(value) => setNewComment(value)}
                 autosize
                 maxLength={280}
+                className={styles.textArea}
               />
               <Button
                 theme="solid"
@@ -364,27 +544,128 @@ const Post = ({ user, content, likes, comments, images }) => {
             </div>
           </div>
 
+          {/* 渲染评论 */}
           <div className={styles.commentList}>
-            {comments.map((comment, index) => (
-              <div key={index} className={styles.comment}>
-                <Avatar size="small" src={comment.user.image} />
-                <div className={styles.commentContent}>
-                  <Space>
-                    <Text strong>{comment.user.username}</Text>
-                    <Text type="tertiary">@{comment.user.email}</Text>
-                    <Text type="tertiary">
-                      · {new Date(comment.created_at).toLocaleString()}
-                    </Text>
-                  </Space>
-                  <Text>{comment.content}</Text>
-                </div>
-              </div>
-            ))}
+            {commentsV1.map(
+              (comment) =>
+                !comment.parent_id && (
+                  <Comment
+                    id={id}
+                    user={comment.user}
+                    key={comment.id}
+                    comment={comment}
+                    onReplyClick={handleReplyClick}
+                    replyingTo={replyingTo}
+                    setReplyingToAndToggle={setReplyingToAndToggle}
+                    replyContent={replyContent}
+                    setReplyContent={setReplyContent}
+                    handleReplySubmit={handleReplySubmit}
+                    commentDel={commentDel}
+                    goToUserPage={goToUserPage}
+                  />
+                )
+            )}
           </div>
         </div>
       )}
+
+      {isShowConfetti && <ConfettiExplosion {...mediumProps} />}
     </Card>
   );
 };
+
+const Comment = ({
+  id,
+  user,
+  comment,
+  onReplyClick,
+  replyingTo,
+  setReplyingToAndToggle,
+  replyContent,
+  setReplyContent,
+  handleReplySubmit,
+  commentDel,
+  goToUserPage
+}) => (
+  <div className={styles.comment}>
+    <Avatar size="small" src={comment.user.image} onClick={()=>{goToUserPage(comment.user.id)}} />
+    <div className={styles.commentContent}>
+      <Space>
+        <Text strong>{comment.user.username}</Text>
+       
+        <Text type="tertiary">
+          · {new Date(comment.created_at).toLocaleString()}
+        </Text>
+      </Space>
+      <Space size="small">
+        <Text>{comment.content}</Text>
+        <Text
+          size="small"
+          type="tertiary"
+          onClick={() => setReplyingToAndToggle(comment.id)}
+          style={{ cursor: "pointer" }}
+        >
+          回复
+        </Text>
+        {/* 删除评论, 用户只能删除自己的 */}
+        {getUserId() === comment.user.id && (
+          <Text
+            size="small"
+            type="tertiary"
+            onClick={() =>{commentDel(comment.id)}}
+
+            style={{ cursor: "pointer" }}
+          >
+            删除
+          </Text>
+        )}
+
+      </Space>
+      {replyingTo === comment.id && (
+        <div className={styles.replyInput}>
+          <Avatar size="small" src={getUserAvatar()} />
+          <div className={styles.replyInputWrapper}>
+            <TextArea
+              placeholder={`Reply to ${comment.user.username}...`}
+              value={replyContent}
+              onChange={(value) => setReplyContent(value)}
+              autosize
+              maxLength={280}
+            />
+            <Button
+              theme="solid"
+              size="small"
+              icon={<IconSend />}
+              onClick={() => {
+                handleReplySubmit(id, comment.id,); // 传递父评论的ID
+              }}
+              disabled={!replyContent.trim()}
+              className={styles.replySendButton}
+            />
+          </div>
+        </div>
+      )}
+      {comment.replies.length > 0 && (
+        <div className={styles.replies}>
+          {comment.replies.map((reply) => (
+            <Comment
+              id={id}
+              key={reply.id}
+              comment={reply}
+              onReplyClick={onReplyClick}
+              replyingTo={replyingTo}
+              setReplyingToAndToggle={setReplyingToAndToggle}
+              replyContent={replyContent}
+              setReplyContent={setReplyContent}
+              handleReplySubmit={handleReplySubmit}
+              commentDel={commentDel}
+              goToUserPage={goToUserPage}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  </div>
+);
 
 export default PostList;

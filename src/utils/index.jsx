@@ -6,3 +6,9 @@ export const getUserId = () => {
   if(uid == undefined) return false;
   return uid;
 };
+
+// 获取用户的头像
+export const getUserAvatar = () => {
+  const avatar = JSON.parse(localStorage.getItem("userInfo"))?.image;
+  return avatar;
+};

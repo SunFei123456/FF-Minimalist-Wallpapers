@@ -1,22 +1,29 @@
 import React from "react";
 import { Card, Avatar, Typography } from "@douyinfe/semi-ui";
+import {useNavigate} from 'react-router-dom'
 
 import styles from "./index.module.css";
 import { useUserStore} from '@/store/index'
+import { getUserId } from "@/utils";
 
 const Sidebar = () => {
   const { Text } = Typography;
   const { userInfo } = useUserStore();
+  const navigate = useNavigate();
+
+  const handleClick = (uid) => {
+    navigate(`/user/${uid}`)
+  } 
 
   return (
     <>
       <Card className={styles.card}>
         {/* top --> avatar + nickname + bio */}
         <div className={styles.top}>
-          <Avatar style={{ margin: 4 }} alt="User" src={userInfo.image}>
+          <Avatar style={{ margin: 4 }} alt="User" src={userInfo.image} onClick={()=>handleClick(getUserId())}> 
           </Avatar>
           <div className={styles.uinfo}>
-            <Text strong>{userInfo.nickname}</Text>
+            <Text strong>{userInfo.user_name}</Text>
             <Text type="tertiary" size="small">
               {userInfo.description}
             </Text>
