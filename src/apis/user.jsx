@@ -228,3 +228,9 @@ export function modify_background(user_id, background_image_url) {
     },
   });
 }
+
+
+// 获取热榜三用户
+export function get_top_users() {
+  return request.get("/user/get_top_users");
+}

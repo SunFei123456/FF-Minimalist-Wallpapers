@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, forwardRef } from "react";
-import { useNavigate} from 'react-router-dom'
+import { useNavigate } from "react-router-dom";
 import {
   Card,
   Avatar,
@@ -23,6 +23,7 @@ import {
   IconHash,
   IconClose,
   IconDelete,
+  IconPlus,
 } from "@douyinfe/semi-icons";
 import {
   get,
@@ -30,14 +31,17 @@ import {
   likeOrCancelLike,
   getComments,
   createComment,
-  deletePost, 
-  deleteComment
+  deletePost,
+  deleteComment,
 } from "@/apis/post";
 import styles from "./index.module.css";
 import { useRef } from "react";
 import { Tag } from "@douyinfe/semi-ui";
 import { getUserId, getUserAvatar } from "@/utils";
 import ConfettiExplosion from "react-confetti-explosion";
+import TopicSelect from "./components/TopicSelect";
+import AddTopicModal from "./components/AddTopicModal";
+import { bindTopic } from "@/apis/topic";
 
 const { Text } = Typography;
 
@@ -57,22 +61,12 @@ const PostList = () => {
     <div className={styles.container}>
       <CreatePost getPost={getPost} />
       {Array.isArray(postList) &&
-        postList.map((post) => <Post key={post.id} getPost={getPost} {...post} />)}
+        postList.map((post) => (
+          <Post key={post.id} getPost={getPost} {...post} />
+        ))}
     </div>
   );
 };
-
-// 模拟话题数据
-const TOPICS = [
-  { value: "technology", label: "Technology", hot: true },
-  { value: "sports", label: "Sports" },
-  { value: "music", label: "Music", hot: true },
-  { value: "movies", label: "Movies" },
-  { value: "food", label: "Food & Cooking", hot: true },
-  { value: "travel", label: "Travel" },
-  { value: "gaming", label: "Gaming" },
-  { value: "art", label: "Art & Design" },
-];
 
 // two
 const CreatePost = ({ getPost }) => {
@@ -87,6 +81,14 @@ const CreatePost = ({ getPost }) => {
   // 是否禁用post表单
   const [disabledCreatePost, setDisabledCreatePost] = useState(false);
 
+  // 控制modal的显示or 隐藏
+  const [showModal, setShowModal] = useState(false);
+
+  // 选择的话题id
+  const [selectedTopicId, setSelectedTopicId] = useState(null);
+  // 选择的话题名称
+  const [selectedTopicName, setSelectedTopicName] = useState(null);
+
   // 处理发帖提交
   const handlePostSubmit = async () => {
     if (!content.trim()) return;
@@ -98,7 +100,14 @@ const CreatePost = ({ getPost }) => {
       images: uploadedImages.length ? JSON.stringify(uploadedImages) : "[]",
     };
     try {
-      await create(data); // 发布帖子
+      const res = await create(data); // 发布帖子
+      // 绑定帖子和话题
+      const binddata = {
+        post_id: res.post_id,
+        topic_id: selectedTopicId,
+      };
+      await bindTopic(binddata);
+
       setContent(""); // 清空内容
       setFileList([]); // 清空图片列表
       getPost(); // 更新帖子列表
@@ -126,26 +135,6 @@ const CreatePost = ({ getPost }) => {
     setShowTopicSelect(false);
   };
 
-  // 渲染话题选项
-  const renderTopicMenu = () => {
-    return (
-      <Dropdown.Menu>
-        {TOPICS.map((topic) => (
-          <Dropdown.Item
-            key={topic.value}
-            onClick={() => handleTopicSelect(topic)}
-            className={styles.topicItem}
-          >
-            <div className={styles.topicOption}>
-              <span className={styles.topicLabel}>#{topic.label}</span>
-              {topic.hot && <span className={styles.hotTag}>Hot</span>}
-            </div>
-          </Dropdown.Item>
-        ))}
-      </Dropdown.Menu>
-    );
-  };
-
   const onUploadSuccess = (r) => {
     // 处理成功上传的图片
     const uploadedImage = r.file_path;
@@ -163,127 +152,131 @@ const CreatePost = ({ getPost }) => {
     }
   };
 
+  // 点击话题回调函数
+  const handleTopicClick = (topicId, topicName) => {
+    // 处理话题点击事件
+    console.log("Selected topic:", topicId);
+    setSelectedTopicId(topicId); // 更新选中的话题
+    setSelectedTopicName(topicName); // 更新选中的话题名称
+    setShowTopicSelect(false); // 关闭话题选择
+  };
+
   return (
-    <Card className={styles.createPost}>
-      {/* 内容输入区域 */}
-      <div className={styles.inputWrapper}>
-        {topicList.length > 0 && (
-          <div className={styles.topicSelect}>
-            {topicList.map((topic) => (
-              // onclike to del this topic
-              <Tag
-                className={styles.topicTag}
-                key={topic.value}
-                color="blue"
-                onClick={() =>
-                  setTopicList(
-                    topicList.filter((item) => item.value !== topic.value)
-                  )
-                }
-              >
-                #{topic.label}
-              </Tag>
+    <>
+      <Card className={styles.createPost}>
+        {/* 渲染选中的话题 Tag*/}
+        {selectedTopicName && (
+          <Tag
+            className={styles.selectedTopicTag}
+            color="blue"
+            onClick={() => setSelectedTopicName(null)}
+          >
+            {selectedTopicName}
+          </Tag>
+        )}
+        {/* 内容输入区域 */}
+        <div className={styles.inputWrapper}>
+          <input
+            ref={inputRef}
+            disabled={disabledCreatePost}
+            className={styles.postInput}
+            placeholder="What's happening?"
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            onClick={() => onClikeInputHandler()}
+          />
+        </div>
+
+        {/* 图片预览区域 */}
+        {fileList.length > 0 && (
+          <div className={styles.imagePreviewArea}>
+            {fileList.map((file, index) => (
+              <div key={index} className={styles.imagePreviewItem}>
+                <img src={file.url} alt={file.name} />
+                <Button
+                  className={styles.removeButton}
+                  icon={<IconClose />}
+                  type="tertiary"
+                  theme="borderless"
+                  onClick={() => handleImageRemove(file)}
+                />
+              </div>
             ))}
           </div>
         )}
-        <input
-          ref={inputRef}
-          disabled={disabledCreatePost}
-          className={styles.postInput}
-          placeholder="What's happening?"
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          onClick={() => onClikeInputHandler()}
-        />
-      </div>
 
-      {/* 图片预览区域 */}
-      {fileList.length > 0 && (
-        <div className={styles.imagePreviewArea}>
-          {fileList.map((file, index) => (
-            <div key={index} className={styles.imagePreviewItem}>
-              <img src={file.url} alt={file.name} />
+        {/* 底部操作栏 */}
+        <div className={styles.bottomAction}>
+          {/* 左侧操作区 */}
+          <div className={styles.leftActions}>
+            {/* 图片上传 */}
+            <Upload
+              action="http://127.0.0.1:5000/wallpaper/upload"
+              name="file"
+              showUploadList={false}
+              accept="image/*"
+              maxCount={6}
+              onChange={handleImageChange}
+              disabled={disabledCreatePost}
+              onSuccess={onUploadSuccess}
+            >
               <Button
-                className={styles.removeButton}
-                icon={<IconClose />}
+                icon={<IconImageStroked />}
                 type="tertiary"
                 theme="borderless"
-                onClick={() => handleImageRemove(file)}
+                disabled={fileList.length >= 6}
               />
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* 底部操作栏 */}
-      <div className={styles.bottomAction}>
-        {/* 左侧操作区 */}
-        <div className={styles.leftActions}>
-          {/* 图片上传 */}
-          <Upload
-            action="http://127.0.0.1:5000/wallpaper/upload"
-            name="file"
-            showUploadList={false}
-            accept="image/*"
-            maxCount={6}
-            onChange={handleImageChange}
-            disabled={disabledCreatePost}
-            onSuccess={onUploadSuccess}
-          >
-            <Button
-              icon={<IconImageStroked />}
-              type="tertiary"
-              theme="borderless"
-              disabled={fileList.length >= 6}
-            />
-          </Upload>
-
-          {/* 话题选择 */}
-          <Dropdown
-            // 控制显示和隐藏
-            style={{ marginLeft: 10 }}
-            trigger="click"
-            position="bottomLeft"
-            visible={showTopicSelect}
-            onVisibleChange={setShowTopicSelect}
-            content={renderTopicMenu()}
-            disabled
-          >
+            </Upload>
+            {/* 话题选择 */}
             <Button
               icon={<IconHash />}
               disabled={disabledCreatePost}
               type="tertiary"
               theme="borderless"
+              onClick={() => setShowTopicSelect(!showTopicSelect)}
             />
-          </Dropdown>
-        </div>
+            {showTopicSelect && (
+              <TopicSelect onTopicClick={handleTopicClick}></TopicSelect>
+            )}
+            {/* 添加话题 */}
+            <Button
+              icon={<IconPlus />}
+              type="tertiary"
+              theme="borderless"
+              disabled={disabledCreatePost}
+              onClick={() => setShowModal(!showModal)}
+            />
+          </div>
 
-        {/* 右侧操作区 */}
-        <div className={styles.rightActions}>
-          {/* 图片计数 */}
-          {fileList.length > 0 && (
-            <Text type="tertiary" className={styles.imageCount}>
-              {fileList.length}/6
+          {/* 右侧操作区 */}
+          <div className={styles.rightActions}>
+            {/* 图片计数 */}
+            {fileList.length > 0 && (
+              <Text type="tertiary" className={styles.imageCount}>
+                {fileList.length}/6
+              </Text>
+            )}
+
+            {/* 字数统计 */}
+            <Text type="tertiary" className={styles.charCount}>
+              {content.length}/280
             </Text>
-          )}
 
-          {/* 字数统计 */}
-          <Text type="tertiary" className={styles.charCount}>
-            {content.length}/280
-          </Text>
-
-          {/* 发布按钮 */}
-          <Button
-            theme="solid"
-            className={styles.postButton}
-            onClick={handlePostSubmit}
-            disabled={!content.trim()}
-          >
-            Post
-          </Button>
+            {/* 发布按钮 */}
+            <Button
+              theme="solid"
+              className={styles.postButton}
+              onClick={handlePostSubmit}
+              disabled={!content.trim()}
+            >
+              Post
+            </Button>
+          </div>
         </div>
-      </div>
-    </Card>
+      </Card>
+
+      {showModal && <AddTopicModal></AddTopicModal>}
+    </>
   );
 };
 
@@ -295,7 +288,9 @@ const mediumProps = {
   colors: ["#9A0023", "#FF003C", "#AF739B", "#FAC7F3", "#F7DBF4"],
 };
 // three
-const Post = ({ id, user, content, likes, comments, images,getPost }) => {
+const Post = ({ id, topics, user, content, likes, comments, images, getPost }) => {
+  console.log("topics",topics);
+  
   const [showComments, setShowComments] = useState(false);
   const [newComment, setNewComment] = useState("");
   // 点赞的状态,用于及时更新点赞数量, 默认状态为数据库返回的结果比对
@@ -355,7 +350,6 @@ const Post = ({ id, user, content, likes, comments, images,getPost }) => {
         setLiked(!isLiked);
         // 重新请求
         getPost();
-        
       }
     } catch (err) {
       console.error(err);
@@ -369,7 +363,6 @@ const Post = ({ id, user, content, likes, comments, images,getPost }) => {
     await setCommentsV1(res.data);
     await setShowComments(!showComments);
   };
-
 
   // 点击回复底部输入框展示
   const handleReplyClick = (commentId) => {
@@ -408,7 +401,7 @@ const Post = ({ id, user, content, likes, comments, images,getPost }) => {
     } else {
       Toast.error("删除失败");
     }
-  }
+  };
   // 删除评论
   const commentDel = async (comment_id) => {
     const res = await deleteComment(comment_id);
@@ -419,8 +412,7 @@ const Post = ({ id, user, content, likes, comments, images,getPost }) => {
     } else {
       Toast.error("删除失败");
     }
-  }
-
+  };
 
   const setReplyingToAndToggle = (commentId) => {
     setReplyingTo(replyingTo === commentId ? null : commentId);
@@ -430,12 +422,12 @@ const Post = ({ id, user, content, likes, comments, images,getPost }) => {
   const navigate = useNavigate();
   const goToUserPage = (user_id) => {
     navigate(`/user/${user_id}`);
-  }
+  };
 
   return (
     <Card className={styles.post}>
       <Space align="start" className={styles.postMain}>
-        <Avatar src={user.image} onClick={()=> goToUserPage(user.id)} />
+        <Avatar src={user.image} onClick={() => goToUserPage(user.id)} />
         <div className={styles.postContent}>
           {/* user info */}
           <Space>
@@ -444,7 +436,7 @@ const Post = ({ id, user, content, likes, comments, images,getPost }) => {
             <Text type="tertiary">· {new Date().toLocaleDateString()}</Text>
           </Space>
           {/* post content */}
-          <Text className={styles.content}>{content}</Text>
+          <Text className={styles.content}>{topics && topics.map((content, index) => <Tag key={index} color="blue" className={styles.topicTag}>{"# "+content.topic_name}</Tag>)}{content}</Text>
           {/* post images */}
           <div className={styles.ImageContainer}>
             {images &&
@@ -500,14 +492,16 @@ const Post = ({ id, user, content, likes, comments, images,getPost }) => {
                 icon={<IconDelete />}
                 type="tertiary"
                 theme="borderless"
-                onClick={()=>postDel(id)}
+                onClick={() => postDel(id)}
               />
             )}
           </Space>
         </div>
+
         <div className={styles.avatarGroup}>
+          <div className={styles.likeCount}>{likes.length}</div>
           {likes.length > 0 && (
-            <AvatarGroup size="small" maxCount={5}   >
+            <AvatarGroup size="small" maxCount={5}>
               {likes.map((like) => (
                 <Avatar
                   key={like.user_id}
@@ -585,14 +579,20 @@ const Comment = ({
   setReplyContent,
   handleReplySubmit,
   commentDel,
-  goToUserPage
+  goToUserPage,
 }) => (
   <div className={styles.comment}>
-    <Avatar size="small" src={comment.user.image} onClick={()=>{goToUserPage(comment.user.id)}} />
+    <Avatar
+      size="small"
+      src={comment.user.image}
+      onClick={() => {
+        goToUserPage(comment.user.id);
+      }}
+    />
     <div className={styles.commentContent}>
       <Space>
         <Text strong>{comment.user.username}</Text>
-       
+
         <Text type="tertiary">
           · {new Date(comment.created_at).toLocaleString()}
         </Text>
@@ -612,14 +612,14 @@ const Comment = ({
           <Text
             size="small"
             type="tertiary"
-            onClick={() =>{commentDel(comment.id)}}
-
+            onClick={() => {
+              commentDel(comment.id);
+            }}
             style={{ cursor: "pointer" }}
           >
             删除
           </Text>
         )}
-
       </Space>
       {replyingTo === comment.id && (
         <div className={styles.replyInput}>
@@ -637,7 +637,7 @@ const Comment = ({
               size="small"
               icon={<IconSend />}
               onClick={() => {
-                handleReplySubmit(id, comment.id,); // 传递父评论的ID
+                handleReplySubmit(id, comment.id); // 传递父评论的ID
               }}
               disabled={!replyContent.trim()}
               className={styles.replySendButton}

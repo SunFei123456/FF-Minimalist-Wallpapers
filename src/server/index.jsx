@@ -57,7 +57,9 @@ request.interceptors.response.use(
         return Promise.reject(error);
       }
       // 例如，跳转到登录页面或重新获取 Token
-    } 
+    } else {
+      return Promise.reject(error);
+    }
   }
 );
 

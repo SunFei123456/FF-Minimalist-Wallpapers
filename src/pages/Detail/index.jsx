@@ -157,11 +157,10 @@ export default function Detail() {
   const deleteImage = () => {
     deletePic(userInfo.user_id, picDetail.id)
       .then((res) => {
-        if (res.code == 200) {
-          Toast.success(res.message);
+        console.log(res);
           // 跳转壁纸页面
           navigate("/wallpaper");
-        }
+        
       })
       .catch((err) => {
         Toast.error(err.message);

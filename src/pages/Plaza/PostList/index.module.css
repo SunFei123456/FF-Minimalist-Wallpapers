@@ -87,6 +87,7 @@
 .leftActions {
 
   display: flex;
+  align-items: start;
   gap: 8px;
 }
 
@@ -304,8 +305,23 @@
 }
 
 .avatarGroup{
-  display: block;
-
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 20%;
+}
+.likeCount{
+  margin-left: 0.5rem;
+  width: 25px;
+  height: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background-color: var(--semi-color-fill-0);
+  color: var(--semi-color-text-0);
+  font-size: 14px;
+  color: var(--semi-color-text-0);
 }
 
 /* 小屏幕隐藏 */
