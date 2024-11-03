@@ -23,3 +23,8 @@ export function bindTopic({ post_id, topic_id }) {
 export function get_hot_topics() {
   return request.get("/topics/hot");
 }
+
+// get topic detail by topic_id
+export function getTopicDetail(topic_id) {
+  return request.get(`/topics/${topic_id}`);
+}

@@ -1,6 +1,6 @@
 import React,{useState ,useEffect} from 'react';
+import {useNavigate } from 'react-router-dom';
 import { Card, List, Typography, Space } from '@douyinfe/semi-ui';
-import { trends, suggestions } from '../../../mock/PostData';
 import styles from './index.module.css';
 
 import { get_top_users } from '@/apis/user';
@@ -9,7 +9,7 @@ import { get_hot_topics } from '@/apis/topic';
 const { Text, Title } = Typography;
 
 const TrendingPanel = () => {
-
+  const navigate = useNavigate();
   const [hotUsers, setHotUsers] = useState([]);
   const [hotTopic, setHotTopic] = useState([]);
   // 获取热榜用户
@@ -29,6 +29,11 @@ const TrendingPanel = () => {
     }
   }
 
+  // 跳转到话题详情页
+  const handleTopicClick = (topicId) => {
+    navigate(`/topic/${topicId}`);
+  }
+
   useEffect(() => {
     fetchHotUsers();
     fetchHotTopic();
@@ -40,7 +45,7 @@ const TrendingPanel = () => {
         <List
           dataSource={hotTopic}
           renderItem={(trend,index) => (
-            <List.Item className={styles.trendItem}>
+            <List.Item className={styles.trendItem} onClick={() => handleTopicClick(trend.id)}>
               <Text type="tertiary" size="small">{index+1}</Text>
               <Text strong>{'#'+ trend.name}</Text>
               <Text type="tertiary" size="small">{trend.views} Views</Text>

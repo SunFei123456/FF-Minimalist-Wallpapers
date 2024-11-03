@@ -75,3 +75,11 @@ export function deleteComment(comment_id) {
     requiresAuth: true,
   });
 }
+
+// 获取指定话题下的帖子
+export function getPostsByTopic(topic_id) {
+  return request({
+    url: `/topics/${topic_id}/posts`,
+    method: "GET",
+  });
+}

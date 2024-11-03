@@ -12,6 +12,7 @@ import Plaza from "@/pages/Plaza/index.jsx";
 import Archive from "@/pages/Archive";
 import About from "@/pages/About";
 import NotFound from "@/components/Error/NotFound";
+import TopicDetail from "@/pages/TopicDetail";
 
 const router = createBrowserRouter([
   {
@@ -31,6 +32,9 @@ const router = createBrowserRouter([
 
       // 广场
       { path: "/plaza", element: <Plaza /> },
+
+      // 话题详情页面
+      { path: "/topic/:id", element: <TopicDetail /> },
 
       // 归档
       { path: "/archive", element: <Archive /> },
