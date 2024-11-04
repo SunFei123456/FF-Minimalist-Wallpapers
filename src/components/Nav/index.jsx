@@ -1,7 +1,7 @@
 // 编写网站的nav区域
 import NavStyle from "./index.module.css";
 
-import { IconMoon, IconSun, IconSearch, IconUser } from "@douyinfe/semi-icons";
+import { IconMoon, IconSun, IconSearch, IconUser, IconHome, IconImage, IconComment, IconBox, IconHelpCircle } from "@douyinfe/semi-icons";
 import { Input } from "@douyinfe/semi-ui";
 import { useEffect, useState } from "react";
 import { Avatar, Dropdown } from "@douyinfe/semi-ui";
@@ -107,17 +107,25 @@ export default function Nav({ onLanguageChange }) {
           <div className={NavStyle.logo}></div>
           <div className={NavStyle.menuItem}>
             <div className={NavStyle.item} onClick={() => menuClick("/")}>
-              首页
+              <IconHome className={NavStyle.menuIcon} size="large" />
+              <span className={NavStyle.menuText}>首页</span>
             </div>
-            <div
-              className={NavStyle.item}
-              onClick={() => menuClick("/wallpaper")}
-            >
-              壁纸
+            <div className={NavStyle.item} onClick={() => menuClick("/wallpaper")}>
+              <IconImage className={NavStyle.menuIcon} size="large" />
+              <span className={NavStyle.menuText}>壁纸</span>
             </div>
-            <div className={NavStyle.item} onClick={()=>menuClick('/plaza')}>广场</div>
-            <div className={NavStyle.item} onClick={()=>menuClick('/archive')}>归档</div>
-            <div className={NavStyle.item} onClick={()=>menuClick('/about')}>关于</div>
+            <div className={NavStyle.item} onClick={()=>menuClick('/plaza')}>
+              <IconComment className={NavStyle.menuIcon} size="large" />
+              <span className={NavStyle.menuText}>广场</span>
+            </div>
+            <div className={NavStyle.item} onClick={()=>menuClick('/archive')}>
+              <IconBox className={NavStyle.menuIcon} size="large" />
+              <span className={NavStyle.menuText}>归档</span>
+            </div>
+            <div className={NavStyle.item} onClick={()=>menuClick('/about')}>
+              <IconHelpCircle className={NavStyle.menuIcon} size="large" />
+              <span className={NavStyle.menuText}>关于</span>
+            </div>
           </div>
         </div>
 

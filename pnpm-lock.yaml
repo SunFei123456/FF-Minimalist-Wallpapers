@@ -8,6 +8,9 @@ dependencies:
   '@douyinfe/semi-icons':
     specifier: ^2.58.0
     version: 2.58.0(react@18.2.0)
+  '@douyinfe/semi-illustrations':
+    specifier: ^2.68.4
+    version: 2.68.4(react@18.2.0)
   '@douyinfe/semi-ui':
     specifier: ^v2.62.0
     version: 2.68.3(acorn@8.11.2)(react-dom@18.2.0)(react@18.2.0)
@@ -23,6 +26,9 @@ dependencies:
   lucide-react:
     specifier: ^0.454.0
     version: 0.454.0(react@18.2.0)
+  parallax-js:
+    specifier: ^3.1.0
+    version: 3.1.0
   react:
     specifier: ^18.2.0
     version: 18.2.0
@@ -38,6 +44,9 @@ dependencies:
   react-router-dom:
     specifier: ^6.23.1
     version: 6.23.1(react-dom@18.2.0)(react@18.2.0)
+  typed.js:
+    specifier: ^2.1.0
+    version: 2.1.0
   zustand:
     specifier: ^4.5.2
     version: 4.5.2(@types/react@18.2.15)(react@18.2.0)
@@ -408,6 +417,14 @@ packages:
 
   /@douyinfe/semi-illustrations@2.68.3(react@18.2.0):
     resolution: {integrity: sha512-gqwKtPiCKmuC7kru+6XCpDs7gI4epnMGR9K3LZVHLXxzF7RcD37VL76rJOlI2zH52ktQSGXkz53PvgYhM1eR9A==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      react: 18.2.0
+    dev: false
+
+  /@douyinfe/semi-illustrations@2.68.4(react@18.2.0):
+    resolution: {integrity: sha512-hy8nd1CzyxjV1Q8+AIbq9TQAuoU95wHWVgduscp+yxXKjGQTNkXppdWoqvQ76Ib+nORBk7eXltlt5cx2xPox1g==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
     dependencies:
@@ -2976,6 +2993,13 @@ packages:
       p-limit: 3.1.0
     dev: true
 
+  /parallax-js@3.1.0:
+    resolution: {integrity: sha512-UONoPKSQykeNvFcemDPxYYDU/T89LSffoaZAwOMhDp0ABhmFPwthgn2GrfB7An9Qo+8nPZIuQeZsh2pWn1qN3A==}
+    dependencies:
+      object-assign: 4.1.1
+      raf: 3.4.1
+    dev: false
+
   /parent-module@1.0.1:
     resolution: {integrity: sha512-GQ2EWRpQV8/o+Aw8YqtfZZPfNRWZYkbidE9k5rpl/hC3vtHHBfGm2Ifi6qWV+coDGkrUKZAxE3Lot5kcsRlh+g==}
     engines: {node: '>=6'}
@@ -3014,6 +3038,10 @@ packages:
   /path-parse@1.0.7:
     resolution: {integrity: sha512-LDJzPVEEEPR+y48z93A0Ed0yXb8pAByGWo/k5YYdYgpY2/2EsOsksJrq7lOHxryrVOn1ejG6oAp8ahvOIQD8sw==}
     dev: true
+
+  /performance-now@2.1.0:
+    resolution: {integrity: sha512-7EAHlyLHI56VEIdK57uwHdHKIaAGbnXPiw0yWbarQZOKaKpvUIgW0jWRVLiatnM+XXlSwsanIBH/hzGMJulMow==}
+    dev: false
 
   /picocolors@1.0.0:
     resolution: {integrity: sha512-1fygroTLlHu66zi26VoTDv8yRgm0Fccecssto+MhsZ0D/DGW2sm8E8AjW7NU5VVTRt5GxbeZ5qBuJr+HyLYkjQ==}
@@ -3061,6 +3089,12 @@ packages:
   /queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
     dev: true
+
+  /raf@3.4.1:
+    resolution: {integrity: sha512-Sq4CW4QhwOHE8ucn6J34MqtZCeWFP2aQSmrlroYgqAV1PjStIhJXxYuTgUIfkEk7zTLjmIjLmU5q+fbD1NnOJA==}
+    dependencies:
+      performance-now: 2.1.0
+    dev: false
 
   /react-confetti-explosion@2.1.2(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-4UzDFBajAGXmF9TSJoRMO2QOBCIXc66idTxH8l7Mkul48HLGtk+tMzK9HYDYsy7Zmw5sEGchi2fbn4AJUuLrZw==}
@@ -3615,6 +3649,10 @@ packages:
       for-each: 0.3.3
       is-typed-array: 1.1.12
     dev: true
+
+  /typed.js@2.1.0:
+    resolution: {integrity: sha512-bDuXEf7YcaKN4g08NMTUM6G90XU25CK3bh6U0THC/Mod/QPKlEt9g/EjvbYB8x2Qwr2p6J6I3NrsoYaVnY6wsQ==}
+    dev: false
 
   /unbox-primitive@1.0.2:
     resolution: {integrity: sha512-61pPlCD9h51VoreyJ0BReideM3MDKMKnh6+V9L08331ipq6Q8OFXZYiqP6n/tbHx4s5I9uRhcye6BrbkizkBDw==}

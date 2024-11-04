@@ -6,43 +6,97 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 50px;
+    height: 64px;
     background-color:var(--semi-color-bg-0);
     border-bottom: 1px solid var(--semi-color-border);
     z-index: 999;       
     padding: 0 26px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .nav .left{
     display: flex;
     align-items: center; 
-    gap: 16px;
+    gap: 32px;
 }
 .nav .left .logo{
-    width: 40px;
-    height: 40px;
-    background: url('/public/vite.svg') no-repeat;
+    width: 50px;
+    height: 50px;
+    background: url('/public/FF_Logo.png') no-repeat;
+    background-size: cover;
     background-position: center center;
+    transition: transform 0.3s ease;
+}
+.nav .left .logo:hover {
+    transform: scale(1.1);
 }
 .nav .left .menuItem{
     display: flex;
     align-items: center;
+    gap: 8px;
 }
 
 .nav .left .menuItem .item{
-    width: 50px;
-    height: 50px;
-    line-height: 50px;
+    height: 64px;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
     cursor: pointer;
-    transition: all 0.2s linear;
-    font-weight: 700;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    position: relative;
 }
 
 .nav .left .menuItem .item:hover{
-    color: #b948fb;
+    color: var(--semi-color-primary);
+    background-color: var(--semi-color-fill-0);
 }
 
+.menuIcon {
+    transition: all 0.3s ease;
+}
 
+.nav .left .menuItem .item:nth-child(1) .menuIcon {
+    color: #FF6B6B;
+}
+
+.nav .left .menuItem .item:nth-child(2) .menuIcon {
+    color: #4ECDC4;
+}
+
+.nav .left .menuItem .item:nth-child(3) .menuIcon {
+    color: #45B7D1;
+}
+
+.nav .left .menuItem .item:nth-child(4) .menuIcon {
+    color: #96CEB4;
+}
+
+.nav .left .menuItem .item:nth-child(5) .menuIcon {
+    color: #D4A5A5;
+}
+
+.nav .left .menuItem .item:hover .menuIcon {
+    transform: translateY(-2px);
+}
+
+.nav .left .menuItem .item::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 3px;
+    background-color: var(--semi-color-primary);
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+}
+
+.nav .left .menuItem .item:hover::after {
+    width: 100%;
+}
 
 /* ------------------right ---------------------- */
 
@@ -50,8 +104,8 @@
 .nav  .right{
     display: flex;
     align-items: center;
-    gap: 16px;
-    height: 40px;
+    gap: 24px;
+    height: 64px;
 
 }
 
@@ -96,11 +150,27 @@
 
 
 .mode{
-    width: 50px;
-    height: 100%;
+    width: 40px;
+    height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.mode:hover {
+    background-color: var(--semi-color-fill-0);
+    transform: rotate(15deg);
+}
+
+.mode :global(.semi-icon-moon) {
+    color: #FFB86C;
+}
+
+.mode :global(.semi-icon-sun) {
+    color: #FFD93D;
 }
 
 /* 居中展示 */
@@ -115,54 +185,102 @@
 /* 小屏幕 */
 @media screen and (max-width: 768px) {
     .nav {
-       height: auto;
-       padding: 10px;
-     }
+        height: 64px;
+        padding: 0 16px;
+    }
    
-    .nav.left {
-       flex-direction: column;
-       align-items: flex-start;
-       gap: 8px;
-     }
+    .nav .left {
+        gap: 16px;
+    }
    
-    .nav.left.logo {
-       width: 30px;
-       height: 30px;
-     }
+    .nav .left .logo {
+        width: 32px;
+        height: 32px;
+    }
    
-    .nav.left.menuItem.item {
-       width: 40px;
-       height: 40px;
-       line-height: 40px;
-       font-size: 12px;
-     }
+    .nav .left .menuItem {
+        gap: 4px;
+    }
    
-    .nav.right {
-       flex-direction: column;
-       align-items: flex-start;
-       gap: 8px;
-       height: auto;
-     }
+    .nav .left .menuItem .item {
+        width: auto;
+        height: 64px;
+        padding: 0 8px;
+        font-size: 12px;
+    }
    
-    .nav.search {
-       flex-direction: column;
-       align-items: flex-start;
-       gap: 5px;
-     }
+    .nav .left .menuItem .item span {
+        display: none;
+    }
    
-    .nav.searchButton {
-       width: 50px;
-       height: 25px;
-       font-size: 12px;
-     }
-   
-    .nav.searchInput {
-       font-size: 12px;
-       padding: 0 5px;
-     }
+    .nav .right {
+        gap: 16px;
+        height: 64px;
+    }
    
     .mode {
-       width: 40px;
-       height: 40px;
-     }
-   }
+        width: 32px;
+        height: 32px;
+    }
+
+    /* 确保图标可见 */
+    .menuIcon {
+        font-size: 20px;
+        margin: 0;
+    }
+}
+
+/* 更小屏幕的额外优化 */
+@media screen and (max-width: 480px) {
+    .nav {
+        padding: 0 8px;
+    }
+
+    .nav .left {
+        gap: 8px;
+    }
+
+    .nav .left .menuItem .item {
+        padding: 0 6px;
+    }
+
+    .nav .right {
+        gap: 8px;
+    }
+}
+
+/* 响应式设计优化 */
+@media screen and (max-width: 768px) {
+    .nav {
+        padding: 0 16px;
+    }
+
+    .nav .left .menuItem .item span {
+        display: block;
+    }
+
+    .nav .left .menuItem .item {
+        padding: 0 12px;
+    }
+
+    .nav .left {
+        gap: 16px;
+    }
+    .nav .left .menuItem .item .menuText{
+        display: none;
+    }
+}
+
+/* 添加动画效果 */
+@keyframes slideIn {
+    from {
+        transform: translateY(-100%);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+.nav {
+    animation: slideIn 0.5s ease;
+}

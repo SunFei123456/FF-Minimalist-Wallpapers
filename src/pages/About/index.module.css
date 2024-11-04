@@ -1,0 +1,160 @@
+.aboutContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  color: var(--text-color);
+}
+
+.animated {
+  opacity: 0;
+}
+
+.animated.animate__animated {
+  opacity: 1;
+}
+
+section {
+  margin-bottom: 4rem;
+}
+
+h1, h2 {
+  margin-bottom: 1.5rem;
+  color: var(--semi-color-primary);
+}
+
+.heroSection {
+  text-align: center;
+  padding: 3rem 0;
+}
+
+.heroSection h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.intro {
+  font-size: 1.2rem;
+  max-width: 800px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.featuresGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.featureCard {
+  background: var(--semi-color-bg-2);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: var(--semi-shadow-elevated);
+  transition: transform 0.3s ease;
+}
+
+.featureCard:hover {
+  transform: translateY(-5px);
+}
+
+.featureCard h3 {
+  margin-bottom: 1rem;
+  color: var(--semi-color-primary);
+}
+
+.featureCard ul {
+  list-style: none;
+  padding: 0;
+}
+
+.featureCard li {
+  margin-bottom: 0.5rem;
+  padding-left: 1.5rem;
+  position: relative;
+}
+
+.featureCard li:before {
+  content: "•";
+  color: var(--semi-color-primary);
+  position: absolute;
+  left: 0;
+}
+
+.highlightsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.highlightCard {
+  background: var(--semi-color-bg-2);
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: var(--semi-shadow-elevated);
+  transition: transform 0.3s ease;
+}
+
+.highlightCard:hover {
+  transform: scale(1.02);
+}
+
+.highlightCard h3 {
+  color: var(--semi-color-primary);
+  margin-bottom: 0.5rem;
+}
+
+.techList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.techItem {
+  background: var(--semi-color-primary);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.techItem:hover {
+  transform: scale(1.1);
+}
+
+.visionSection {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  background: var(--semi-color-bg-2);
+  border-radius: 12px;
+  box-shadow: var(--semi-shadow-elevated);
+}
+
+.visionSection p {
+  line-height: 1.8;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .aboutContainer {
+    padding: 1rem;
+  }
+
+  .heroSection {
+    padding: 2rem 0;
+  }
+
+  .heroSection h1 {
+    font-size: 2rem;
+  }
+
+  .featuresGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .highlightsGrid {
+    grid-template-columns: 1fr;
+  }
+} 

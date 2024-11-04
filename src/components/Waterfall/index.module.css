@@ -1,5 +1,4 @@
 .myMasonryGrid {
-  margin-top: 2rem;
   display: -webkit-box;
   /* Not needed if autoprefixing */
   display: -ms-flexbox;

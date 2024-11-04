@@ -7,21 +7,18 @@ export default function Waterfall({ images }) {
   const navigate = useNavigate();
   const breakpointColumnsObj = {
     default: 4,
-    1100: 3,
-    700: 2,
-    500: 1,
+    1100: 4,
+    700: 4,
+    500: 3,
   };
 
-  // 跳转图片详细页面 接收一个key id
   const goTodetail = (key) => {
-    // console.log(key);
-    // 跳转图片详细页面 , 并且将key 进行传递
     navigate(`/detail/${key}`);
   };
 
   return (
     <Masonry
-      className={`animate__animated animate__fadeInLeft ${WaterfallStyle.myMasonryGrid}`}
+      className={`animate__animated animate__fadeIn ${WaterfallStyle.myMasonryGrid}`}
       breakpointCols={breakpointColumnsObj}
       columnClassName={WaterfallStyle.myMasonryGridColumn}
     >
@@ -33,8 +30,7 @@ export default function Waterfall({ images }) {
             key={index}
             src={item.url}
             alt={item}
-            style={{ width: "100%", display: "block" }}
-            //  为什么这里需要修改this指向
+            style={{ width: "100%", display: "block",borderRadius:"12px" }}
             onClick={() => goTodetail(item.id)}
           />
         );
