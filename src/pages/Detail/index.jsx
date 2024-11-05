@@ -4,34 +4,34 @@ import {
   Image,
   Card,
   Space,
-  Typography,
   Tag,
   Button,
-  Avatar,
   Modal,
 } from "@douyinfe/semi-ui";
 
 import {
-  IconPlus,
   IconLikeHeart,
   IconStar,
   IconFilledArrowDown,
 } from "@douyinfe/semi-icons";
 // 导入useParams
-import { useSearchParams, useParams, useNavigate } from "react-router-dom";
-import { deletePic, getDetail, isCollected, isliked } from "@/apis/wallpaper";
+import { useParams, useNavigate } from "react-router-dom";
+import { deletePic, getDetail, user_image_relation } from "@/apis/wallpaper";
 import {
-  collectImage,
   followUser,
   get_user_info,
   is_following,
-  likeImage,
   unfollowUser,
+  toggleLikeImage,
+  toggleCollectImage,
+  downloadImage,
 } from "@/apis/user";
 
 import { useUserStore } from "@/store";
 import { Toast } from "@douyinfe/semi-ui";
 import { generate_qrcode } from "@/apis/qrcode";
+import { downloadFile } from "@/utils";
+import Loading from "@/components/Loading";
 
 export default function Detail() {
   const { Meta } = Card;
@@ -47,22 +47,37 @@ export default function Detail() {
   // 存储一个key, 用来判断当前图片的作者是否已经被关注
   const [isfollowActived, setIsfollowActived] = useState(false);
 
+  const [isLiked, setIsLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(0);
+  const [isCollected, setIsCollected] = useState(false);
+  const [collectCount, setCollectCount] = useState(0);
+
+  const [downloadCount, setDownloadCount] = useState(0);
+
+  const [loading,setLoading] = useState(true)
+
   // 接收路由参数的id
   const { id } = useParams();
   // 根据图片的id返回具体的图片
   const getDataByid = async () => {
-    getDetail(id).then((res) => {
-      setPicDetail(res);
-      console.log("picDetail:", res);
-      get_user_info(res.author).then((res) => {
-        console.log("Image_Creator:", res);
-        setUserCurrentInfo(res);
-      });
-      likePicActived(res.author, res.id);
-      collectPicActived(res.author, res.id);
-      imageIScreateByCurrentUser(res.author);
-      followActived(userInfo.user_id, res.author);
-    });
+    setLoading(true); // 开始加载数据
+    try {
+        const res = await getDetail(id); // 使用 await 获取数据
+        setPicDetail(res);
+        setLikeCount(res.like_count);
+        setCollectCount(res.favorite_count);
+        setDownloadCount(res.download_count);
+
+        const userInfoRes = await get_user_info(res.author); // 使用 await 获取用户信息
+        setUserCurrentInfo(userInfoRes);
+
+        imageIScreateByCurrentUser(res.author);
+        followActived(userInfo.user_id, res.author);
+    } catch (error) {
+        console.error("Error fetching data:", error); // 处理错误
+    } finally {
+        setLoading(false); // 数据加载完成，设置 loading 为 false
+    }
   };
   // 判断当前图片是否属于当前用户的图片
   const imageIScreateByCurrentUser = (user_id) => {
@@ -73,59 +88,64 @@ export default function Detail() {
     }
   };
 
-  // 喜欢壁纸
+  // 喜欢or取消喜欢
   const likePic = () => {
-    likeImage(userInfo.user_id, picDetail.id)
+    toggleLikeImage(userInfo.user_id, picDetail.id)
       .then((res) => {
         if (res.code == 200) {
+          setIsLiked(!isLiked);
+          setLikeCount(isLiked ? likeCount - 1 : likeCount + 1);
           Toast.success(res.message);
-          // 动态添加likePicActived
-          document.getElementById("likePic").style.color = "red";
-        }
-      })
-      .catch((err) => {
-        Toast.success(err.message);
-      });
-  };
-  // 判断当前用户是否已经喜欢过该壁纸
-  const likePicActived = (user_id, image_id) => {
-    isliked(user_id, image_id).then((res) => {
-      console.log(res);
-      if (res.is_liked) {
-        document.getElementById("likePic").style.color = "red";
-      }
-    });
-  };
-
-  // 收藏壁纸
-  const collectPic = () => {
-    collectImage(userInfo.user_id, picDetail.id)
-      .then((res) => {
-        if (res.code == 200) {
-          Toast.success(res.message);
-          // 动态添加likePicActived
-          document.getElementById("collectPic").style.color = "yellow";
         }
       })
       .catch((err) => {
         Toast.error(err.message);
       });
   };
-  // 判断当前用户是否已经收藏过该壁纸
-  const collectPicActived = (user_id, image_id) => {
-    isCollected(user_id, image_id).then((res) => {
-      if (res.is_collected) {
-        document.getElementById("collectPic").style.color = "yellow";
-      }
-    });
+
+  // 收藏壁纸or 取消收藏
+  const collectPic = () => {
+    toggleCollectImage(userInfo.user_id, picDetail.id)
+      .then((res) => {
+        if (res.code == 200) {
+          setIsCollected(!isCollected);
+          setCollectCount(isCollected ? collectCount - 1 : collectCount + 1);
+          Toast.success(res.message);
+        }
+      })
+      .catch((err) => {
+        Toast.error(err.message);
+      });
+  };
+
+  // 下载图片
+  const download = () => {
+    // 先调取接口，记录本次下载行为
+    downloadImage(picDetail.id)
+      .then((res) => {
+        if (res.code === 200) {
+          setDownloadCount(downloadCount + 1);
+          // 时间戳组成文件名
+          const timestamp = new Date().getTime();
+          const filename = `${timestamp}.jpg`;
+          // 调用下载函数
+          downloadFile(res.image_url, { filename: filename });
+          Toast.success(res.message);
+        } else {
+          Toast.error(res.message);
+        }
+      })
+      .catch((error) => {
+        // 处理网络错误或其他异常
+        console.error("下载失败:", error);
+        Toast.error("下载失败，请重试。");
+      });
   };
 
   // 生成分享链接
-  // 定义 copy 函数
   const copy = async (text) => {
     try {
       await navigator.clipboard.writeText(text);
-      console.log("Text copied to clipboard");
     } catch (err) {
       console.error("Failed to copy text: ", err);
     }
@@ -134,7 +154,6 @@ export default function Detail() {
   // 生成qrcode
   const generateQRcode = () => {
     generate_qrcode(picDetail.id).then((res) => {
-      console.log(res);
       if (res.code == 200) {
         Modal.success({
           width: 400,
@@ -155,34 +174,32 @@ export default function Detail() {
 
   // 删除图片
   const deleteImage = () => {
-    deletePic(userInfo.user_id, picDetail.id)
-      .then((res) => {
-        console.log(res);
-          // 跳转壁纸页面
-          navigate("/wallpaper");
-        
-      })
-      .catch((err) => {
-        Toast.error(err.message);
-      });
+    Modal.confirm({
+      title: "确认删除",
+      content: "您确定要删除这张图片吗？",
+      onOk: () => {
+        deletePic(userInfo.user_id, picDetail.id)
+          .then((res) => {
+            navigate("/wallpaper");
+          })
+          .catch((err) => {
+            Toast.error(err.message);
+          });
+      },
+    });
   };
 
   // 关注行为
   const handleFollow = () => {
     followUser(userInfo.user_id, picDetail.author)
       .then((res) => {
-        console.log(
-          "当前用户:",
-          userInfo.user_id,
-          "要关注的用户:",
-          picDetail.author
-        );
         if (res.code == 200) {
           Toast.success(res.message);
           setIsfollowActived(true);
         }
       })
       .catch((err) => {
+        console.log(err);
         Toast.error(err.message);
       });
   };
@@ -196,6 +213,7 @@ export default function Detail() {
       }
     });
   };
+
   // 判断当前用户是否已经关注了该作者
   const followActived = (user_id, author_id) => {
     is_following(user_id, author_id).then((res) => {
@@ -205,12 +223,31 @@ export default function Detail() {
     });
   };
 
+  //  获取当前图片和用户之前的关系(like, collect, dislike, collectd , null)
+  const fetchRelation = () => {
+    user_image_relation(userInfo.user_id, id).then((res) => {
+      setIsLiked(res.is_liked);
+      setIsCollected(res.is_collected);
+    });
+  };
+
+  // 跳转用户主页
   const goto_Personal_homepage = (id) => {
     navigate(`/user/${id}`);
   };
+  // 根据图片的id返回具体的图片详细信息
   useEffect(() => {
     getDataByid();
-  }, []);
+  }, [id]);
+
+  useEffect(() => {
+    fetchRelation();
+  }, [isLiked, isCollected]);
+
+  if (loading) {
+    return <Loading />; // 数据未加载时显示 Loading 组件
+  }
+
   return (
     <>
       <div className={DetailStyle.detail}>
@@ -218,55 +255,47 @@ export default function Detail() {
         <div className={DetailStyle.left}>
           {/* 图片 */}
           <div className={DetailStyle.imageContainer}>
-            <img src={picDetail.url} alt="" />
-            <br />
-            <span>{picDetail.name}</span>
+            <Image className={DetailStyle.image}   src={picDetail.url}  width={"100%"} alt="" />
           </div>
-          {/* 操作栏, 包含喜欢, 收藏, 下载 ,以及下载按钮*/}
+          {/* 操作栏 */}
           <div className={DetailStyle.operationBar}>
-            <Space align="center">
-              <Tag
-                size="large"
-                shape="circle"
-                onClick={() => {
-                  likePic();
-                }}
-              >
-                <IconLikeHeart id="likePic" />
-                喜欢
-              </Tag>
-              <Tag
-                size="large"
-                shape="circle"
-                onClick={() => {
-                  collectPic();
-                }}
-              >
-                <IconStar id="collectPic" />
-                收藏
-              </Tag>
-              <Tag size="large" shape="circle">
-                <IconFilledArrowDown /> 下载
-              </Tag>
-            </Space>
+            <Space align="center" spacing={20}>
+              <div className={DetailStyle.operationItem} onClick={likePic}>
+                <IconLikeHeart
+                  size="large"
+                  style={{
+                    color: isLiked ? "#FF1228" : "gray",
+                  }}
+                />
+                <span>{likeCount || 0}</span>
+              </div>
 
+              <div className={DetailStyle.operationItem} onClick={collectPic}>
+                <IconStar
+                  size="large"
+                  style={{ color: isCollected ? "orange" : "gray" }}
+                />
+                <span>{collectCount || 0}</span>
+              </div>
+
+              <div className={DetailStyle.operationItem} onClick={download}>
+                <IconFilledArrowDown size="large" />
+                <span>{downloadCount || 0}</span>
+              </div>
+            </Space>
             {/* 生成分享链接 */}
             <div style={{ display: "flex", gap: "10px" }}>
               {picIScreateByCurrentUser == true && (
                 <>
                   <Button
                     style={{ backgroundColor: "#FF0018", color: "white" }}
-                    onClick={() => {
-                      deleteImage();
-                    }}
+                    onClick={deleteImage}
                   >
                     删除图片
                   </Button>
                   <Button
-                    style={{ backgroundColor: "#3df5", color: "white" }}
-                    onClick={() => {
-                      generateQRcode();
-                    }}
+                    style={{ backgroundColor: "#000", color: "white" }}
+                    onClick={generateQRcode}
                   >
                     生成QR-Code
                   </Button>
@@ -284,10 +313,8 @@ export default function Detail() {
               {picIScreateByCurrentUser == false && (
                 <>
                   <Button
-                    style={{ backgroundColor: "#3df5", color: "white" }}
-                    onClick={() => {
-                      generateQRcode();
-                    }}
+                    style={{ backgroundColor: "#000", color: "white" }}
+                    onClick={generateQRcode}
                   >
                     生成QR-Code
                   </Button>
@@ -305,12 +332,12 @@ export default function Detail() {
             </div>
           </div>
         </div>
-
         {/* 右边图片详细信息 */}
         <div>
           {/* 图片详细参数 */}
           <Card title="图片详细信息" className={DetailStyle.right}>
             <div className={DetailStyle.ImageDetailContent}>
+              <span>图片名称: {picDetail.name}</span>
               <span>图片分辨率：{picDetail.dimensions}</span>
               <span>上传者: {userCurrentInfo.user_nickname}</span>
               <span>上传时间: {picDetail.create_time}</span>
@@ -325,16 +352,16 @@ export default function Detail() {
             </div>
           </Card>
           <br />
-          {/* 图片点赞量 和 收藏量 和 喜欢量 */}
+          {/* 图片流量 */}
           <Card title="图片流量" className={DetailStyle.right}>
             <div className={DetailStyle.ImageDetailContent}>
-              <span>下载量: {picDetail.download_count}</span>
-              <span>收藏量：{picDetail.favorite_count}</span>
-              <span>喜欢量：{picDetail.like_count}</span>
+              <span>下载量: {downloadCount}</span>
+              <span>收藏量：{collectCount}</span>
+              <span>喜欢量：{likeCount}</span>
             </div>
           </Card>
         </div>
-
+        {/* 用户信息 */}
         <div className={DetailStyle.userInfo}>
           <Space align="center">
             {/* 发布者头像 */}
@@ -354,8 +381,7 @@ export default function Detail() {
               </span>
             </Space>
           </Space>
-
-          {/* 关注按钮 + icon  */}
+          {/* 关注按钮 */}
           {picIScreateByCurrentUser ? (
             <Button
               type="primary"

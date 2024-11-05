@@ -8,8 +8,8 @@ export default function Waterfall({ images }) {
   const breakpointColumnsObj = {
     default: 4,
     1100: 4,
-    700: 4,
-    500: 3,
+    700: 3,
+    500: 2,
   };
 
   const goTodetail = (key) => {
@@ -23,7 +23,6 @@ export default function Waterfall({ images }) {
       columnClassName={WaterfallStyle.myMasonryGridColumn}
     >
       {images.map((item, index) => {
-        console.log(item.id);
         return (
           <img
             className="animate__animated animate__fadeIn"

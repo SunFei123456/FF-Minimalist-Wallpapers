@@ -8,6 +8,8 @@ import { getAllTags } from "@/apis/tag";
 import { getHot20, getTags } from "@/apis/wallpaper";
 import eventBus from "@/eventBus";
 import 'animate.css';
+import { Toast } from "@douyinfe/semi-ui";
+import Loading from "@/components/Loading";
 
 // 添加装饰性图形组件
 const DecorativeShape = ({ className }) => (
@@ -24,10 +26,19 @@ export default function Wallpaper() {
   const [images, setImages] = useState([]);
   const [activeTag, setActiveTag] = useState('热门'); // 新增：当前选中的标签
 
+  const [loading, setLoading] = useState(false);
+
   // 渲染完毕之后 请求接口拿数据
   const getHot20Data = async () => {
-    const res = await getHot20();
-    setImages(res);
+    setLoading(true);
+    try {
+      const res = await getHot20();
+      setImages(res);
+    } catch (error) {
+      Toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const getTagsData = async () => {
@@ -40,7 +51,6 @@ export default function Wallpaper() {
   // 点击不同标签显示不同标签下的图片
   const DisplayImagesUnderDifferentTabs = (tag) => {
     getTags(tag).then((res) => {
-      console.log(res);
       setImages(res);
     });
   };
@@ -65,6 +75,10 @@ export default function Wallpaper() {
     setActiveTag(tagName);
     DisplayImagesUnderDifferentTabs(tagName);
   };
+
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <div className={WallpaperStyle.container}>

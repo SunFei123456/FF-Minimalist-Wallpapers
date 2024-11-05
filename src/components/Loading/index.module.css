@@ -1,0 +1,24 @@
+.loadingContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* 使加载页面充满整个视口 */
+    color: #333; /* 文本颜色 */
+    font-family: Arial, sans-serif; /* 字体 */
+}
+
+.loadingSpinner {
+    border: 8px solid #7f7fef; /* 边框颜色 */
+    border-top: 8px solid #3498db; /* 顶部边框颜色 */
+    border-radius: 50%; /* 圆形 */
+    width: 60px; /* 宽度 */
+    height: 60px; /* 高度 */
+    animation: spin 1s linear infinite; /* 动画效果 */
+    margin-bottom: 20px; /* 下边距 */
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

@@ -37,6 +37,7 @@ import {
 import { useUserStore } from "@/store";
 import { useNavigate } from "react-router-dom";
 import { Toast } from "@douyinfe/semi-ui";
+import Loading from "@/components/Loading";
 
 export default function Self() {
   // 获取路由参数
@@ -63,6 +64,8 @@ export default function Self() {
   // 定义一个状态,用来动态添加css
   const [activeStyle, setActiveStyle] = useState("1");
 
+  const [loading, setLoading] = useState(true);
+
   const showModal = () => {
     setIsModalVisible(true);
   };
@@ -72,20 +75,26 @@ export default function Self() {
   };
   // 获取指定id用户的信息
   const getInFobyID = () => {
-    console.log(1);
-    get_user_info(id).then((res) => {
-      // 考虑新用户没有背景图片的情况
-      if (res.person_home_background_image == null) {
-        res.person_home_background_image = "/src/assets/images/2.jpg";
-      } else {
-        // 替换反斜杠为正斜杠
-        res.person_home_background_image =
-          res.person_home_background_image.replace(/\\/g, "/");
-      }
-
-      setuserInfoData(res);
-    });
+    setLoading(true);
+    try {
+      get_user_info(id).then((res) => {
+        // 考虑新用户没有背景图片的情况
+        if (res.person_home_background_image == null) {
+          res.person_home_background_image = "/src/assets/images/2.jpg";
+        } else {
+          // 替换反斜杠为正斜杠
+          res.person_home_background_image =
+            res.person_home_background_image.replace(/\\/g, "/");
+        }
+        setuserInfoData(res);
+        setLoading(false);
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
+
+
   // 获取我上传的壁纸看列表
   const getmyUploadsimageList = async () => {
     get_user_images(id)
@@ -124,6 +133,15 @@ export default function Self() {
 
   // 切换不同模板 以及 高亮点击的按钮
   const settingSome = (modelName, activeStyle) => {
+    console.log(modelName);
+    if (modelName == "上传") {
+      getmyUploadsimageList();
+    } else if (modelName == "喜欢") {
+      getmyLikesimageList();
+    } else if (modelName == "收藏") {
+      getmyCollectsimageList();
+    }
+    
     setActiveKey(modelName);
     setActiveStyle(activeStyle);
   };
@@ -146,11 +164,7 @@ export default function Self() {
       }
     });
   };
-  useEffect(() => {
-    getInFobyID();
-  }, []);
-
-  // 上传图片
+ 
   // 上传成功之后的回调
   const uploadSuccess = (res) => {
     changeImageOfPersonalCenter(res.file_path);
@@ -158,10 +172,13 @@ export default function Self() {
   useEffect(() => {
     getInFobyID();
     getmyUploadsimageList();
-    getmyLikesimageList();
-    getmyCollectsimageList();
     get_user_follow_count();
   }, []);
+
+  if (loading) {
+    return <Loading />;
+  }
+
   let action = "http://127.0.0.1:5000/wallpaper/upload";
   let imageOnly = "image/*";
   return (
@@ -282,7 +299,7 @@ export default function Self() {
           }}
           className={activeStyle === "2" ? SelfStyle.active : ""}
         >
-          喜欢 {myLikesimageList ? myLikesimageList.length : 0}
+          喜欢 {userInfo ? userInfo.user_like_count : 0}
         </span>
         <span
           onClick={() => {
@@ -290,7 +307,7 @@ export default function Self() {
           }}
           className={activeStyle === "3" ? SelfStyle.active : ""}
         >
-          收藏 {myCollectsimageList ? myCollectsimageList.length : 0}
+          收藏 {userInfo ? userInfo.user_collect_count : 0}
         </span>
         <span>浏览历史</span>
       </div>

@@ -21,7 +21,6 @@ const getToken = () => {
 // 请求拦截器
 request.interceptors.request.use(
   (config) => {
-    console.log(config);
     // 检查是否需要 Token
     if (config.requiresAuth) { // 假设 '/protected' 是需要 Token 的接口
       const token = getToken();

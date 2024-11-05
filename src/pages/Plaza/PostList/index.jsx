@@ -42,20 +42,34 @@ import ConfettiExplosion from "react-confetti-explosion";
 import TopicSelect from "./components/TopicSelect";
 import AddTopicModal from "./components/AddTopicModal";
 import { bindTopic } from "@/apis/topic";
+import Loading from "@/components/Loading";
 
 const { Text } = Typography;
 
 // one
 const PostList = () => {
+  const [loading, setLoading] = useState(false);
   const [postList, setPostList] = useState([]);
   const getPost = async () => {
-    const res = await get();
-    setPostList(res.data);
+    setLoading(true);
+    try {
+      const res = await get();
+      setPostList(res.data);
+    } catch (error) {
+      Toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
   };
+   
 
   useEffect(() => {
     getPost();
   }, []);
+
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <div className={styles.container}>

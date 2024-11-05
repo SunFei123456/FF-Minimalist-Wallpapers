@@ -1,29 +1,56 @@
 .detail {
-    padding: 16px;
-    padding-top: 80px;
+    padding: 80px 16px;
     width: 100%;
-    height: 90vh;
+    height: auto;
     display: flex;
-    justify-content:center;
+    justify-content: center;
     gap: 16px;
 }
-.left{
+
+.left {
     display: flex;
     flex-direction: column;
 }
-.imageContainer{
-     width: 700px;
-}
-.imageContainer img{
-    width: 100%;
+
+.imageContainer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    width: 700px;
+    height: 500px;
+    /* 阴影 */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    /* 外边框 */
+    border: 2px solid #e622c5;
+    overflow: hidden;
 }
 
-.operationBar{
+.imageContainer .image {
+    border-radius: 8px;
+    background-size: cover;
+    background-position: center center;
+}
+
+.operationBar {
     width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-top: 16px;
+}
+
+.operationItem {
+    width: 60px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background-color: var(--semi-color-fill-1);
+    padding: 3px 10px;
+    border-radius: 10px;
+    cursor: pointer;
 }
 
 
@@ -37,19 +64,19 @@
     max-width: 28.75rem;
     max-height: 500px;
     width: auto;
-
 }
-.userInfo{
+
+.userInfo {
     display: flex;
     flex-direction: column;
     gap: 16px;
 }
 
-.likePicActived{
+.likePicActived {
     color: red;
 }
 
-.publisher{
+.publisher {
     border-radius: 100%;
     width: 100px;
     height: 100px;
@@ -59,18 +86,20 @@
     /* 外边框 */
     border: 2px solid #e622c5;
 }
-.publisher_name{
-    font-weight:700 ;
+
+.publisher_name {
+    font-weight: 700;
     margin-left: 10px;
 }
-.publisher_desc{
-    font-weight:400 ;
+
+.publisher_desc {
+    font-weight: 400;
     margin-left: 10px;
     font-size: 13px;
     color: gray;
 }
 
-.userName{
+.userName {
     font-size: 24px;
     font-weight: 600;
 }
@@ -82,23 +111,26 @@
         justify-content: start;
         flex-direction: column;
     }
-    .imageContainer{
-        max-width:100%;
+
+    .imageContainer {
+        max-width: 100%;
         width: 100%;
     }
-    .operationBar{
+
+    .operationBar {
         gap: 1.25rem;
-        flex-wrap: wrap;   
+        flex-wrap: wrap;
     }
 
     /* 用户信息 */
-    .userInfo{
+    .userInfo {
         margin: 20px 0;
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
     }
-    .userInfo .publisher{
+
+    .userInfo .publisher {
         width: 50px;
         height: 50px;
     }

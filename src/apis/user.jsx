@@ -124,45 +124,44 @@ export function get_user_info(user_id) {
   });
 }
 
-// 用户点击喜欢作品
+// 用户喜欢or取消喜欢图片
 // http://127.0.0.1:5000/user/likeImage
 
-export function likeImage(user_id, image_id) {
+export function toggleLikeImage(user_id, image_id) {
   return request({
-    url: "/user/likeImage",
+    url: "/user/toggleLikeImage",
     method: "post",
     data: {
       user_id,
       image_id,
     },
+    requiresAuth: true, 
   });
 }
 
-// 用户点击收藏作品
-// http://127.0.0.1:5000/user/collectImage
-
-export function collectImage(user_id, image_id) {
+// 用户收藏or取消收藏图片
+export function toggleCollectImage(user_id, image_id) {
   return request({
-    url: "/user/collectImage",
+    url: "/user/toggleCollectImage",
     method: "post",
     data: {
       user_id,
       image_id,
     },
+    requiresAuth: true,
   });
-}
+} 
+
 
 // 用户点击下载作品
-// http://127.0.0.1:5000/user/downloadImage
-
-export function downloadImage(user_id, image_id) {
+export function downloadImage(image_id) {
   return request({
     url: "/user/downloadImage",
     method: "post",
     data: {
-      user_id,
       image_id,
     },
+    requiresAuth: true,
   });
 }
 

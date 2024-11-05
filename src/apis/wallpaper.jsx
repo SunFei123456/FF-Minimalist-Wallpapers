@@ -114,7 +114,7 @@ export function searchbykeyword(keyword) {
 // http://127.0.0.1:5000/wallpaper/isCollected
 // post user_id and image_id
 
-export function isCollected(user_id, image_id) {
+/* export function isCollected(user_id, image_id) {
   return request({
     url: "/wallpaper/isCollected",
     method: "post",
@@ -124,11 +124,11 @@ export function isCollected(user_id, image_id) {
     },
   });
 }
-
+ */
 // 11. 检查当前图片是否被当前用户所喜欢
 // http://127.0.0.1:5000/wallpaper/isliked
 
-export function isliked(user_id, image_id) {
+/* export function isliked(user_id, image_id) {
   return request({
     url: "/wallpaper/isliked",
     method: "post",
@@ -138,6 +138,25 @@ export function isliked(user_id, image_id) {
     },
   });
 }
+ */
+
+
+
+// 10. 获取指定图片和指定用户之间的关系(喜欢 收藏 or 无任何关系)
+export function user_image_relation(user_id, image_id) {
+  return request({
+    url: "/wallpaper/user_image_relation",
+    method: "post",
+    data: {
+      user_id,
+      image_id,
+    },
+  });
+}
+
+
+
+
 
 // 12. 删除图片以及所有关联记录
 // http://127.0.0.1:5000/wallpaper/delete

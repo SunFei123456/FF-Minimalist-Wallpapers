@@ -35,9 +35,11 @@ import {
 } from "@/apis/post";
 import { getUserAvatar, getUserId } from "@/utils";
 import { IconSend } from "@douyinfe/semi-icons";
+import Loading from "@/components/Loading";
 
 const { Text } = Typography;
 function PostImages({ images }) {
+
   if (images.length === 0) return null;
   return (
     <div className={`${styles.grid} ${styles[`grid${images.length}`]}`}>
@@ -58,8 +60,6 @@ function PostImages({ images }) {
 }
 
 function LikeAvatars({ likes, total }) {
-  console.log(likes);
-
   return (
     <div className={styles.likeContainer}>
       <div className={styles.avatars}>
@@ -110,13 +110,18 @@ function TopicDetail() {
   const [replyingTo, setReplyingTo] = useState(null);
 
   const [curPostId, setCurPostId] = useState(null);
-
+  const [loading, setLoading] = useState(false);
   // 获取话题详情
   const fecthTopicDetail = () => {
+    setLoading(true);
     getTopicDetail(id).then((res) => {
       setTopic(res.data);
+      setLoading(false);
+    }).finally(() => {
+      setLoading(false);
     });
   };
+
   // 获取话题下的帖子
   const fecthTopicPosts = () => {
     getPostsByTopic(id).then((res) => {
@@ -224,6 +229,8 @@ function TopicDetail() {
     fecthTopicDetail();
     fecthTopicPosts();
   }, []);
+
+  
   // 跳转用户页面
   const navigate = useNavigate();
   const goToUserPage = (user_id) => {
