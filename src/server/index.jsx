@@ -8,9 +8,12 @@ import axios from "axios";
 // 3. 请求拦截器 / 响应拦截器
 
 const request = axios.create({
-  baseURL: "http://localhost:5000",
+  // 使用环境变量
+  baseURL: import.meta.env.VITE_SERVER_URL,
   timeout: 3000,
 });
+
+
 
 
 
@@ -41,7 +44,7 @@ request.interceptors.response.use(
     return response.data;
   },
   (error) => {
-    if (error.response.status === 401) {
+    if (error.response?.status === 401) {
       // 处理 Token 过期的情况
       if (error.response.data.message === 'Token expired') {
         Toast.error('Token 过期，请重新登录');

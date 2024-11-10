@@ -48,7 +48,6 @@ function PostImages({ images }) {
           (url, index) => (
             <Image
               width={180}
-              height={100}
               key={index}
               src={url}
               className={styles.postImage}

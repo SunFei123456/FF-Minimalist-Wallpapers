@@ -79,7 +79,6 @@ export default function Self() {
 
   // 跳转图片详细页面 接收一个key id
   const goTodetail = (key) => {
-    // console.log(key);
     // 跳转图片详细页面 , 并且将key 进行传递
     navigate(`/detail/${key}`);
   };
@@ -99,7 +98,6 @@ export default function Self() {
     get_user_images(userInfo.user_id)
       .then((res) => {
         if (res.code == 200) {
-          console.log(res);
           setmyUploadsimageList(res.data);
         }
       })

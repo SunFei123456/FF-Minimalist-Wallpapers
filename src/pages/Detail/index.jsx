@@ -69,7 +69,7 @@ export default function Detail() {
         setDownloadCount(res.download_count);
 
         const userInfoRes = await get_user_info(res.author); // 使用 await 获取用户信息
-        setUserCurrentInfo(userInfoRes);
+        setUserCurrentInfo(userInfoRes?.data);
 
         imageIScreateByCurrentUser(res.author);
         followActived(userInfo.user_id, res.author);

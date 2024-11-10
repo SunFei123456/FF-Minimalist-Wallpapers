@@ -7,7 +7,6 @@ initialState 参数只会在组件的初始化渲染中起作用，后续渲染�
 */
 export default function Counter(porps) {
   function getInitialValue() {
-    console.log("调用次数");
     return { number: porps.number };
   }
 

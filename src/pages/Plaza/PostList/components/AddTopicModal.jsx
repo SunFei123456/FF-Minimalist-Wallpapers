@@ -17,7 +17,6 @@ export default function AddTopicModal() {
     try {
       const res = await createTopic(formValue);
       if (res.code == 200) {
-        console.log("res",res);
         Toast.success("创建成功,你现在可以在话题列表中看到该话题");
         setVisible(false);
       } 

@@ -19,7 +19,6 @@ export default function LoginAndRegisterPane({visible,hideModal}) {
         hideModal();
       }
     }).catch((err)=>{
-      console.log(err);
       Toast.error(err.error);
     })
   };
@@ -32,15 +31,10 @@ export default function LoginAndRegisterPane({visible,hideModal}) {
         Toast.success('注册成功');
       }
     }).catch((err)=>{
-      console.log(err);
       Toast.error(err.error);
     })
   };
 
-    // 使用 useEffect 监听 userInfo 的变化
-  useEffect(() => {
-        console.log('userInfo changed:', userInfo);
-  }, [userInfo]);
   return (
     <Modal  visible={visible} footer={null} onCancel={hideModal }>
       <Tabs>

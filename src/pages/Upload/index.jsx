@@ -20,7 +20,7 @@ import { useUserStore } from '@/store/index'
 
 export default function UploadWallpaper() {
   const { Option } = Form.Select;
-  const action = "http://127.0.0.1:5000/wallpaper/upload";
+  const action = `${import.meta.env.VITE_SERVER_URL}/wallpaper/upload`;
   const navigate = useNavigate();
   const {userInfo} = useUserStore()
   // 定义一个state用来存储所有的标签

@@ -14,12 +14,6 @@ export function login(email, password) {
 
 // http://localhost:5000/user/register
 export function register(reg_username, reg_email, reg_password) {
-  console.log(
-    "reg_username,reg_email, reg_password",
-    reg_username,
-    reg_email,
-    reg_password
-  );
   return request({
     url: "/user/register",
     method: "post",

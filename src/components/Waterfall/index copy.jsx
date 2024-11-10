@@ -15,7 +15,6 @@ export default function Waterfall({images}) {
 
   // 跳转图片详细页面 接收一个key id
   const goTodetail = (key) => {
-    // console.log(key);
     // 跳转图片详细页面 , 并且将key 进行传递
     navigate(`/detail/${key}`);
   };
@@ -27,7 +26,6 @@ export default function Waterfall({images}) {
       columnClassName={WaterfallStyle.myMasonryGridColumn}
     >
       {images.map((item, index) => {
-        console.log(item.id);
         return (
           <img
             key={index}

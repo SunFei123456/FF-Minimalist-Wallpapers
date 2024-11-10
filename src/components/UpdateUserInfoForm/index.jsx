@@ -16,13 +16,10 @@ import "./index.css";
 
 export const UpdateUserInfoForm = ({ visible, afterClose, onCancel }) => {
   const { userInfo, setUserInfo } = useUserStore();
-  const [url, setUrl] = useState(
-    "https://lf3-static.bytednsdoc.com/obj/eden-cn/ptlz_zlp/ljhwZthlaukjlkulzlp/root-web-sites/dy.png"
-  );
+  const [url, setUrl] = useState(userInfo.image);
 
   // 上传头像
   const onSuccess = async (response, file) => {
-    console.log("上传头像之后返回的对象:",response);
     // 上传成功
     if (response.code == 200) {
       Toast.success(response.message);
@@ -33,7 +30,6 @@ export const UpdateUserInfoForm = ({ visible, afterClose, onCancel }) => {
   // 绑定头像
   const bindAvatar = async () => {
     const res = await bind_avatar(userInfo.user_id, url);
-    console.log("绑定头像",res);
     if (res.code == 200) {
       Toast.success(res.message);
       // 更新 Zustand store 和本地存储
@@ -81,7 +77,7 @@ export const UpdateUserInfoForm = ({ visible, afterClose, onCancel }) => {
     </div>
   );
 
-  const api = "http://localhost:5000/user/upload_avatar";
+  const api = `${import.meta.env.VITE_SERVER_URL}/user/upload_avatar`;
   let imageOnly = "image/*";
 
   return (
@@ -192,15 +188,26 @@ export const UpdateUserInfoForm = ({ visible, afterClose, onCancel }) => {
                 placeholder="请输入简介"
               />
 
-              {/* 按钮提交 */}
-              <Button
-                htmlType="submit"
-                type="primary"
-                theme="solid"
-                style={{ width: `100%` }}
-              >
-                提交
-              </Button>
+              <div style={{ display: "flex", gap: "10px" }}>
+                {/* 按钮提交 */}
+                <Button
+                  htmlType="submit"
+                  type="primary"
+                  theme="solid"
+                  style={{ width: `20%` }}
+                >
+                  提交
+                </Button>
+                {/* 重置 */}
+                <Button
+                  htmlType="reset"
+                  type="tertiary"
+                  theme="solid"
+                  style={{ width: `20%` }}
+                >
+                  重置
+                </Button>
+              </div>
             </>
           )}
         </Form>

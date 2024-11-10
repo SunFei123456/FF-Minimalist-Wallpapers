@@ -4,7 +4,7 @@ import React, { useEffect, useRef } from 'react';
 import { Typography, Button, Card, Tag, Image } from '@douyinfe/semi-ui';
 import { IconArrowRight, IconGithubLogo, IconStar, IconDownload,  IconHeartStroked, IconUpload, IconSearch, IconCodeStroked, IconAt,IconShareMoneyStroked} from '@douyinfe/semi-icons';
 import Typed from 'typed.js';
-
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -13,6 +13,7 @@ import styles from './index.module.css';
 import 'animate.css';
 
 const { Title, Text } = Typography;
+
 
 // 示例壁纸数据
 const SAMPLE_WALLPAPERS = [
@@ -43,6 +44,7 @@ const Home = () => {
   const typedRef = useRef(null);
   const sceneRef = useRef(null);
 
+  const navigate = useNavigate();
   useEffect(() => {
     // 打字机效果
     const typed = new Typed(typedRef.current, {
@@ -331,9 +333,9 @@ const Home = () => {
         <div className={`${styles.ctaContent} ${styles.animated}`} data-animation="animate__fadeIn">
           <Title heading={2}>准备好开始了吗？</Title>
           <Text>加入我们的社区，发现更多精彩壁纸</Text>
-          <Button theme="solid" type="primary" size="large" icon={<IconArrowRight />}>
+          <Text style={{ cursor: "pointer", marginLeft: 8,color: "#ffffff" }} onClick={() => navigate("/wallpaper")} icon={<IconArrowRight />}>
             立即加入
-          </Button>
+          </Text>
         </div>
       </section>
 
@@ -367,7 +369,7 @@ const Home = () => {
         </div>
         <div className={styles.footerBottom}>
           <Text>FF-Minimalist-Wallpapers © 2024</Text>
-          <div className={styles.socialLinks}>
+          <div className={styles.socialLinks} onClick={() => window.open("https://github.com/FF-Minimalist-Wallpapers")}>
             <IconGithubLogo className={styles.socialIcon} />
           </div>
         </div>

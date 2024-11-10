@@ -6,9 +6,7 @@ import { Input } from "@douyinfe/semi-ui";
 import { useEffect, useState } from "react";
 import { Avatar, Dropdown } from "@douyinfe/semi-ui";
 import { useNavigate } from "react-router-dom";
-import { searchbykeyword } from "@/apis/wallpaper";
 import LoginAndRegisterPane from "@/components/LoginAndRegisterPane/index";
-import eventBus from "@/eventBus";
 import { Button } from "@douyinfe/semi-ui";
 import { useUserStore } from "@/store";
 import { Toast } from "@douyinfe/semi-ui";
@@ -57,21 +55,14 @@ export default function Nav({ onLanguageChange }) {
 
   // 点击菜单路由跳转
   const menuClick = (key) => {
-    if (key == "/user/9") {
-      // 强制刷新
-      navigator(key, { replace: true, state: { forceRefresh: true } });
-      window.location.reload();
-    } else {
-      console.log(key);
-      navigator(key);
-    }
+      navigator(key, { replace: true });
+      // 如果key 是个人页面/user开头
+      if  (key.startsWith("/user")) {
+        window.location.reload();
+      }
   };
+  
 
-  const search = async () => {
-    const res = await searchbykeyword(keyword);
-    console.log(res);
-    eventBus.emit("updateData", res);
-  };
 
   const showModal = () => {
     setVisible(true);
@@ -83,6 +74,7 @@ export default function Nav({ onLanguageChange }) {
 
   // 退出登录
   const logout = () => {
+    menuClick("/");
     // 清空store中的用户信息
     useUserStore.setState({
       userInfo: {},
@@ -91,14 +83,10 @@ export default function Nav({ onLanguageChange }) {
     localStorage.removeItem("userInfo");
     // 清除localStorage中的token
     localStorage.removeItem("token");
-    Toast("退出成功");
+    Toast.success("退出登录成功");
+    // 跳转到首页
+  
   };
-  // console.log(userInfo.image); // 应该输出 null
-  // console.log(avatar.default); // 应该输出默认头像路径
-  // console.log(avatar.cur); // 应该输出当前头像路径
-  useEffect(() => {
-    // console.log(userInfo);
-  }, [userInfo]);
   return (
     <>
       <div className={NavStyle.nav}>
@@ -117,10 +105,6 @@ export default function Nav({ onLanguageChange }) {
             <div className={NavStyle.item} onClick={()=>menuClick('/plaza')}>
               <IconComment className={NavStyle.menuIcon} size="large" />
               <span className={NavStyle.menuText}>广场</span>
-            </div>
-            <div className={NavStyle.item} onClick={()=>menuClick('/archive')}>
-              <IconBox className={NavStyle.menuIcon} size="large" />
-              <span className={NavStyle.menuText}>归档</span>
             </div>
             <div className={NavStyle.item} onClick={()=>menuClick('/about')}>
               <IconHelpCircle className={NavStyle.menuIcon} size="large" />

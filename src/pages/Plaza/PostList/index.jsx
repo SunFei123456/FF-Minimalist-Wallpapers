@@ -103,33 +103,33 @@ const CreatePost = ({ getPost }) => {
   // 选择的话题名称
   const [selectedTopicName, setSelectedTopicName] = useState(null);
 
-  // 处理发帖提交
-  const handlePostSubmit = async () => {
-    if (!content.trim()) return;
-    console.log("JSON", JSON.stringify(uploadedImages));
-
-    const data = {
-      content,
-      user_id: getUserId(),
-      images: uploadedImages.length ? JSON.stringify(uploadedImages) : "[]",
-    };
-    try {
-      const res = await create(data); // 发布帖子
+// 处理发帖提交
+const handlePostSubmit = async () => {
+  if (!content.trim()) return;
+  const data = {
+    content,
+    user_id: getUserId(),
+    images: uploadedImages.length ? JSON.stringify(uploadedImages) : "[]",
+  };
+  try {
+    const res = await create(data); // 发布帖子
+    if (selectedTopicId) { // 如果选择了话题
       // 绑定帖子和话题
       const binddata = {
         post_id: res.post_id,
         topic_id: selectedTopicId,
       };
       await bindTopic(binddata);
-
-      setContent(""); // 清空内容
-      setFileList([]); // 清空图片列表
-      getPost(); // 更新帖子列表
-      Toast.success("Post created successfully!");
-    } catch (error) {
-      console.error("Failed to create post:", error);
     }
-  };
+    setContent(""); // 清空内容
+    setFileList([]); // 清空图片列表
+    getPost(); // 刷新帖子列表
+   
+    Toast.success("Post created successfully!");
+  } catch (error) {
+    console.error("Failed to create post:", error);
+  }
+};
 
   // 处理图片列表变化
   const handleImageChange = ({ fileList: newFileList }) => {
@@ -168,8 +168,6 @@ const CreatePost = ({ getPost }) => {
 
   // 点击话题回调函数
   const handleTopicClick = (topicId, topicName) => {
-    // 处理话题点击事件
-    console.log("Selected topic:", topicId);
     setSelectedTopicId(topicId); // 更新选中的话题
     setSelectedTopicName(topicName); // 更新选中的话题名称
     setShowTopicSelect(false); // 关闭话题选择
@@ -225,7 +223,7 @@ const CreatePost = ({ getPost }) => {
           <div className={styles.leftActions}>
             {/* 图片上传 */}
             <Upload
-              action="http://127.0.0.1:5000/wallpaper/upload"
+              action={`${import.meta.env.VITE_SERVER_URL}/wallpaper/upload`}
               name="file"
               showUploadList={false}
               accept="image/*"
@@ -303,8 +301,7 @@ const mediumProps = {
 };
 // three
 const Post = ({ id, topics, user, content, likes, comments, images, getPost }) => {
-  console.log("topics",topics);
-  
+ 
   const [showComments, setShowComments] = useState(false);
   const [newComment, setNewComment] = useState("");
   // 点赞的状态,用于及时更新点赞数量, 默认状态为数据库返回的结果比对
@@ -459,7 +456,6 @@ const Post = ({ id, topics, user, content, likes, comments, images, getPost }) =
               ).map((url, index) => (
                 <Image
                   width={180}
-                  height={100}
                   key={index}
                   src={url}
                   className={styles.postImage}

@@ -10,6 +10,7 @@ import {
   Col,
   Card,
   Image,
+  Spin,
 } from "@douyinfe/semi-ui";
 
 import {
@@ -29,7 +30,6 @@ import {
   get_user_images,
   get_user_likes,
   get_user_collects,
-  getFollowCount,
   get_user_info,
   modify_background,
 } from "@/apis/user";
@@ -56,8 +56,6 @@ export default function Self() {
   const [myLikesimageList, setmyLikesimageList] = useState([]);
   // 我收藏过的图片
   const [myCollectsimageList, setmyCollectsimageList] = useState([]);
-  // 获取当前用户的粉丝和关注数量
-  const [followCount, setFollowCount] = useState({});
 
   // 定义三个标识符, 上传, 喜欢, 收藏, 用于点击切换不同的组件
   const [activeKey, setActiveKey] = useState("上传");
@@ -65,6 +63,8 @@ export default function Self() {
   const [activeStyle, setActiveStyle] = useState("1");
 
   const [loading, setLoading] = useState(true);
+
+  const [tabLoading, setTabLoading] = useState(false);
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -78,15 +78,7 @@ export default function Self() {
     setLoading(true);
     try {
       get_user_info(id).then((res) => {
-        // 考虑新用户没有背景图片的情况
-        if (res.person_home_background_image == null) {
-          res.person_home_background_image = "/src/assets/images/2.jpg";
-        } else {
-          // 替换反斜杠为正斜杠
-          res.person_home_background_image =
-            res.person_home_background_image.replace(/\\/g, "/");
-        }
-        setuserInfoData(res);
+        setuserInfoData(res?.data);
         setLoading(false);
       });
     } catch (error) {
@@ -94,14 +86,14 @@ export default function Self() {
     }
   };
 
-
   // 获取我上传的壁纸看列表
   const getmyUploadsimageList = async () => {
+    setTabLoading(true);
     get_user_images(id)
       .then((res) => {
         if (res.code == 200) {
-          console.log(res);
           setmyUploadsimageList(res.data);
+          setTabLoading(false);
         }
       })
       .catch((err) => {
@@ -110,30 +102,32 @@ export default function Self() {
   };
   // 获取我喜欢的图片列表
   const getmyLikesimageList = async () => {
+    setTabLoading(true);
     const res = await get_user_likes(id);
     if (res.code == 200) {
       setmyLikesimageList(res.data);
+      setTabLoading(false);
     }
   };
 
   // 获取我收藏的图片列表
   const getmyCollectsimageList = async () => {
+    setTabLoading(true);
     const res = await get_user_collects(id);
     if (res.code == 200) {
       setmyCollectsimageList(res.data);
+      setTabLoading(false);
     }
   };
 
   // 跳转图片详细页面 接收一个key id
   const goTodetail = (key) => {
-    // console.log(key);
     // 跳转图片详细页面 , 并且将key 进行传递
     navigate(`/detail/${key}`);
   };
 
   // 切换不同模板 以及 高亮点击的按钮
   const settingSome = (modelName, activeStyle) => {
-    console.log(modelName);
     if (modelName == "上传") {
       getmyUploadsimageList();
     } else if (modelName == "喜欢") {
@@ -141,15 +135,9 @@ export default function Self() {
     } else if (modelName == "收藏") {
       getmyCollectsimageList();
     }
-    
+
     setActiveKey(modelName);
     setActiveStyle(activeStyle);
-  };
-  // 获取当前用户的粉丝和关注数量
-  const get_user_follow_count = () => {
-    getFollowCount(id).then((res) => {
-      setFollowCount(res);
-    });
   };
 
   // 修改个人中心页资料模块的后方背景
@@ -164,7 +152,7 @@ export default function Self() {
       }
     });
   };
- 
+
   // 上传成功之后的回调
   const uploadSuccess = (res) => {
     changeImageOfPersonalCenter(res.file_path);
@@ -172,14 +160,13 @@ export default function Self() {
   useEffect(() => {
     getInFobyID();
     getmyUploadsimageList();
-    get_user_follow_count();
   }, []);
 
   if (loading) {
     return <Loading />;
   }
 
-  let action = "http://127.0.0.1:5000/wallpaper/upload";
+
   let imageOnly = "image/*";
   return (
     <div className={SelfStyle.self}>
@@ -187,7 +174,10 @@ export default function Self() {
       <div
         className={SelfStyle.top}
         style={{
-          backgroundImage: `url(${userInfo.person_home_background_image})`,
+          backgroundImage: `url(${userInfo.person_home_background_image.replace(
+            /\\/g,
+            "/"
+          )})`,
         }}
       >
         <div className={SelfStyle.userInfo}>
@@ -209,10 +199,10 @@ export default function Self() {
             {/* 账号流量信息 */}
             <div style={{ display: "flex", gap: "10px", color: "#fff" }}>
               <div style={{ margin: "3px 6px" }}>
-                关注 <span>{followCount.following_count}</span>
+                关注 <span>{userInfo.follow_count}</span>
               </div>
               <div style={{ margin: "3px 6px" }}>
-                粉丝 <span>{followCount.followers_count}</span>
+                粉丝 <span>{userInfo.followers_count}</span>
               </div>
               <div style={{ margin: "3px 0" }}>
                 获喜 <span>{userInfo.user_like_count}</span>
@@ -314,46 +304,87 @@ export default function Self() {
 
       {/* 下半部分  用户作品 */}
       <div className={SelfStyle.content}>
-        {/* 我的上传模块 */}
-        {activeKey == "上传" &&
-          Array.isArray(myUploadsimageList) &&
-          myUploadsimageList.map((item) => (
-            <div
-              key={item.image_id}
-              className={SelfStyle.imagecard}
-              onClick={() => goTodetail(item.image_id)}
-            >
-              <img src={item.image_url} alt="" />
-              <p>{item.image_description}</p>
-              <Space>
-                <IconCalendar /> <p>{item.image_upload_time}</p>
-              </Space>
-            </div>
-          ))}
+        {tabLoading ? (
+          <Spin size="large" style={{ width: "100%", margin: "0 auto" }} />
+        ) : (
+          <>
+            {/* 我的上传模块 */}
+            {activeKey == "上传" &&
+              Array.isArray(myUploadsimageList) &&
+              myUploadsimageList.map((item) => (
+                <Card
+                  shadows="hover"
+                  title={item.image_description}
+                  headerStyle={{
+                    padding: "5px 10px",
+                    fontSize: "10px !important",
+                  }}
+                  bodyStyle={{ padding: "5px 10px" }}
+                  key={item.image_id}
+                  className={SelfStyle.imagecard}
+                  onClick={() => goTodetail(item.image_id)}
+                >
+                  <img src={item.image_url} alt="" />
+                  <Space style={{ marginTop: "5px" }}>
+                    <IconCalendar className={SelfStyle.iconCalendar} />{" "}
+                    <p className={SelfStyle.imageUploadTime}>
+                      {item.image_upload_time}
+                    </p>
+                  </Space>
+                </Card>
+              ))}
 
-        {/* 我的喜欢模块 */}
-        {activeKey == "喜欢" &&
-          myLikesimageList.map((item) => (
-            <div key={item.image_id} className={SelfStyle.imagecard}>
-              <img src={item.image_url} alt="" />
-              <p>{item.image_description}</p>
-              <Space>
-                <IconCalendar /> <p>{item.image_upload_time}</p>
-              </Space>
-            </div>
-          ))}
+            {/* 我的喜欢模块 */}
+            {activeKey == "喜欢" &&
+              myLikesimageList.map((item) => (
+                <Card
+                  shadows="hover"
+                  title={item.image_description}
+                  headerStyle={{
+                    padding: "5px 10px",
+                    fontSize: "10px !important",
+                  }}
+                  bodyStyle={{ padding: "5px 10px" }}
+                  key={item.image_id}
+                  className={SelfStyle.imagecard}
+                  onClick={() => goTodetail(item.image_id)}
+                >
+                  <img src={item.image_url} alt="" />
+                  <Space style={{ marginTop: "5px" }}>
+                    <IconCalendar className={SelfStyle.iconCalendar} />{" "}
+                    <p className={SelfStyle.imageUploadTime}>
+                      {item.image_upload_time}
+                    </p>
+                  </Space>
+                </Card>
+              ))}
 
-        {/* 我的收藏模块 */}
-        {activeKey == "收藏" &&
-          myCollectsimageList.map((item) => (
-            <div key={item.image_id} className={SelfStyle.imagecard}>
-              <img src={item.image_url} alt="" />
-              <p>{item.image_description}</p>
-              <Space>
-                <IconCalendar /> <p>{item.image_upload_time}</p>
-              </Space>
-            </div>
-          ))}
+            {/* 我的收藏模块 */}
+            {activeKey == "收藏" &&
+              myCollectsimageList.map((item) => (
+                <Card
+                  shadows="hover"
+                  title={item.image_description}
+                  headerStyle={{
+                    padding: "5px 10px",
+                    fontSize: "10px !important",
+                  }}
+                  bodyStyle={{ padding: "5px 10px" }}
+                  key={item.image_id}
+                  className={SelfStyle.imagecard}
+                  onClick={() => goTodetail(item.image_id)}
+                >
+                  <img src={item.image_url} alt="" />
+                  <Space style={{ marginTop: "5px" }}>
+                    <IconCalendar className={SelfStyle.iconCalendar} />{" "}
+                    <p className={SelfStyle.imageUploadTime}>
+                      {item.image_upload_time}
+                    </p>
+                  </Space>
+                </Card>
+              ))}
+          </>
+        )}
       </div>
 
       <UpdateUserInfoForm
@@ -362,23 +393,25 @@ export default function Self() {
         onCancel={hideModal}
         afterClose={() => console.log("After Close callback executed")}
       />
-      {/* 壁纸更换 */}
-      <Upload
-        action={action}
-        fileName="file"
-        accept={imageOnly}
-        maxSize={10240}
-        minSize={50}
-        style={{ marginBottom: 12 }}
-        className={SelfStyle.uploadBgImageBox}
-        onSizeError={(file, fileList) =>
-          Toast.error(`${file.name} 文件尺寸不符合要求`)
-        }
-        // 上传成功
-        onSuccess={uploadSuccess}
-      >
-        <IconPlus size="small" className={SelfStyle.uploadBgImage} />
-      </Upload>
+      {/* 壁纸更换-> 只有当前用户才显示,访问者不显示 */}
+      {id == curId && (
+        <Upload
+          action={`${import.meta.env.VITE_SERVER_URL}/wallpaper/upload`}
+          fileName="file"
+          accept={imageOnly}
+          maxSize={10240}
+          minSize={50}
+          style={{ marginBottom: 12 }}
+          className={SelfStyle.uploadBgImageBox}
+          onSizeError={(file, fileList) =>
+            Toast.error(`${file.name} 文件尺寸不符合要求`)
+          }
+          // 上传成功
+          onSuccess={uploadSuccess}
+        >
+          <IconPlus size="small" className={SelfStyle.uploadBgImage} />
+        </Upload>
+      )}
     </div>
   );
 }

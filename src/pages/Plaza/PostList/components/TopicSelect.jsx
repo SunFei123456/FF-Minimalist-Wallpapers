@@ -14,14 +14,12 @@ const TopicList = ({ onTopicClick }) => {
   const getTopicsList = () => {
     // 调用接口获取话题列表
     getTopics().then((res) => {
-      console.log("res", res);
       setTopics(res.data);
     })
   }
 
   useEffect(() => {
     getTopicsList()
-    console.log("search", search);
   }, [search]);
 
   const filteredTopics = topics.filter((topic) => topic.name.includes(search));

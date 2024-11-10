@@ -9,7 +9,6 @@ import UploadWallpaper from "@/pages/Upload";
 
 import Self from "@/pages/Self";
 import Plaza from "@/pages/Plaza/index.jsx";
-import Archive from "@/pages/Archive";
 import About from "@/pages/About";
 import NotFound from "@/components/Error/NotFound";
 import TopicDetail from "@/pages/TopicDetail";
@@ -36,8 +35,6 @@ const router = createBrowserRouter([
       // 话题详情页面
       { path: "/topic/:id", element: <TopicDetail /> },
 
-      // 归档
-      { path: "/archive", element: <Archive /> },
 
       // 关于
       { path: "/about", element: <About /> },

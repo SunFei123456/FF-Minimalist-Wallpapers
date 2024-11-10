@@ -164,16 +164,21 @@
 
 .ImageContainer {
   width: 100%;
+  height: auto;
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
   justify-content: space-seven;
-  align-items: center;
+  align-items: start;
 }
 
 .postImage {
   width: 28%;
-  object-fit: cover;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
   border-radius: 1rem;
   margin-top: 0.5rem;
 }

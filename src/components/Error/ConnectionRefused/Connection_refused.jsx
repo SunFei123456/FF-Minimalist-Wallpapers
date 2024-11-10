@@ -18,16 +18,16 @@ import styles from "./index.module.css";
 const { Title, Text } = Typography;
 
 const troubleshootingSteps = [
-  "Check your internet connection",
-  "Verify the server address is correct",
-  "Contact your system administrator if the problem persists",
+  "检查您的网络是否可以正常连接",
+  "验证服务器是否正常运行",
+  "如果问题仍然存在,请联系服务器管理员 2770894499@qq.com",
 ];
 
 const ConnectionRefused = () => {
   return (
     <div className={styles.container}>
       <div className={styles.content}>
-        <Card className={styles.card}>
+        <div className={styles.card}>
           <Space vertical align="center" spacing="loose">
             {/* Error Icon */}
             <div className={styles.iconWrapper}>
@@ -37,14 +37,12 @@ const ConnectionRefused = () => {
 
             {/* Error Message */}
             <Space vertical align="center" spacing="tight">
-              <Title heading={1}>Connection Refused</Title>
+              <Title heading={1}>连接失败</Title>
               <Text type="secondary" size="large">
-                ERR_CONNECTION_REFUSED
+                连接被拒绝
               </Text>
               <Text type="tertiary" className={styles.description}>
-                We couldn't establish a connection to the server. This might be
-                due to network issues or the server may be temporarily
-                unavailable.
+                我们无法与服务器建立连接。这可能是由于网络问题或服务器暂时不可用。
               </Text>
             </Space>
 
@@ -59,10 +57,10 @@ const ConnectionRefused = () => {
                   </Space>
                 </div>
                 <div className={styles.lastCheck}>
-                  <Text type="secondary">last check</Text>
+                  <Text type="secondary">最后检查</Text>
                   <Space className={styles.status}>
                     <Badge dot type="warning" pulse />
-                    <Text strong>1 hour ago</Text>
+                    <Text strong>1 小时前</Text>
                   </Space>
                 </div>
               </div>
@@ -75,19 +73,19 @@ const ConnectionRefused = () => {
                 theme="solid"
                 onClick={() => window.location.reload()}
               >
-                Try Again
+                再试一次
               </Button>
               <Button
                 icon={<IconHome />}
                 onClick={() => (window.location.href = "/")}
               >
-                Go Home
+                首页
               </Button>
             </Space>
 
             {/* Troubleshooting Steps */}
             <div className={styles.troubleshooting}>
-              <Title heading={4}>Troubleshooting Steps:</Title>
+              <Title heading={4}>故障排除步骤:</Title>
               <List
                 dataSource={troubleshootingSteps}
                 renderItem={(item, index) => (
@@ -105,10 +103,10 @@ const ConnectionRefused = () => {
               type="tertiary"
               onClick={() => window.history.back()}
             >
-              Go Back
+              返回首页
             </Button>
           </Space>
-        </Card>
+        </div>
       </div>
     </div>
   );

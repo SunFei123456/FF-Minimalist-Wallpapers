@@ -29,6 +29,9 @@
 }
 
 .operate {
+    position: sticky;
+    top: 10px;
+    z-index: 100;
     display: flex;
     align-items: center;
     gap: 60px;
@@ -59,13 +62,11 @@
 }
 
 .content {
-    padding: 1rem;
+    padding: 3rem;
     width: 100%;
     height: auto;
     display: flex;
     flex-wrap: wrap;
-    padding: 16px;
-    padding-left: 60px;
     gap: 30px;
 }
 
@@ -73,15 +74,12 @@
     width: 22.5%;
     height: auto;
     cursor: pointer;
-    display: inline-block;
-    margin: 0;
-    box-sizing: border-box;
 }
 
 .imagecard img {
     width: 100%;
     height: auto;
-    border-radius: 10px;
+    border-radius: 8px;
     object-fit: cover;
     background-size: cover;
     background-position: center center;
@@ -92,8 +90,20 @@
 }
 
 .imagecard:hover img {
-    filter: contrast(120%);
-    transition: 0.5s;
+    /* 阴影 */
+    box-shadow: 0 0 10px var(--semi-shadow-elevated);
+    transition: all 0.5s ease;
+}
+.imageDescription{
+    margin-top: 8px;
+ /* 2行, 溢出... */
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal;
+    font-weight: 600;
 }
 
 .uploadBgImageBox {
@@ -158,8 +168,8 @@
 
     .content {
         justify-content: space-between;
-        padding-left: 20px;
         gap: 15px;
+        padding: 1rem 0.5rem;
     }
 
     .imagecard {
@@ -167,6 +177,16 @@
     }
     .imagecard p{
         font-size: 14px;
+    }
+    .imageDescription{
+        display: none;
+    }
+    .iconCalendar{
+        display: none;
+    }
+    .imageUploadTime{
+        margin-top: 1rem;
+        font-size: 10px;
     }
     .edit{
         position: absolute;

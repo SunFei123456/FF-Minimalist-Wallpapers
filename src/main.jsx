@@ -8,7 +8,7 @@ import A from "./App";
 
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <RouterProvider router={router}>
+  <RouterProvider router={router} >
     <A></A>
   </RouterProvider>
 );
