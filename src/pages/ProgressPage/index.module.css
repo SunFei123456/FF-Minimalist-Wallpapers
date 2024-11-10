@@ -1,0 +1,26 @@
+.layout {
+    min-height: 100vh;
+    background-color: var(--semi-color-bg-0);
+  }
+  
+  .content {
+    padding: 24px;
+    max-width: 1200px;
+    margin: 50px auto;
+  }
+  
+  .progressContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  
+  @media (max-width: 768px) {
+    .content {
+      padding: 12px;
+    }
+    
+    .progressContainer {
+      gap: 16px;
+    }
+  }

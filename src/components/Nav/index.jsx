@@ -1,7 +1,7 @@
 // 编写网站的nav区域
 import NavStyle from "./index.module.css";
 
-import { IconMoon, IconSun, IconSearch, IconUser, IconHome, IconImage, IconComment, IconBox, IconHelpCircle } from "@douyinfe/semi-icons";
+import { IconMoon, IconSun, IconSearch, IconUser, IconHome, IconImage, IconComment, IconBox, IconHelpCircle, IconPlusStroked } from "@douyinfe/semi-icons";
 import { Input } from "@douyinfe/semi-ui";
 import { useEffect, useState } from "react";
 import { Avatar, Dropdown } from "@douyinfe/semi-ui";
@@ -105,6 +105,10 @@ export default function Nav({ onLanguageChange }) {
             <div className={NavStyle.item} onClick={()=>menuClick('/plaza')}>
               <IconComment className={NavStyle.menuIcon} size="large" />
               <span className={NavStyle.menuText}>广场</span>
+            </div>
+            <div className={NavStyle.item} onClick={()=>menuClick('/progress')}>
+              <IconBox className={NavStyle.menuIcon} size="large" />
+              <span className={NavStyle.menuText}>进度</span>
             </div>
             <div className={NavStyle.item} onClick={()=>menuClick('/about')}>
               <IconHelpCircle className={NavStyle.menuIcon} size="large" />
