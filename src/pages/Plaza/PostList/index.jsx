@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, forwardRef } from "react";
 import { useNavigate } from "react-router-dom";
+import * as qiniu from "qiniu-js";
 import {
   Card,
   Avatar,
@@ -37,7 +38,7 @@ import {
 import styles from "./index.module.css";
 import { useRef } from "react";
 import { Tag } from "@douyinfe/semi-ui";
-import { getUserId, getUserAvatar } from "@/utils";
+import { getUserId, getUserAvatar, uploadFile } from "@/utils";
 import ConfettiExplosion from "react-confetti-explosion";
 import TopicSelect from "./components/TopicSelect";
 import AddTopicModal from "./components/AddTopicModal";
@@ -61,7 +62,6 @@ const PostList = () => {
       setLoading(false);
     }
   };
-   
 
   useEffect(() => {
     getPost();
@@ -103,33 +103,34 @@ const CreatePost = ({ getPost }) => {
   // 选择的话题名称
   const [selectedTopicName, setSelectedTopicName] = useState(null);
 
-// 处理发帖提交
-const handlePostSubmit = async () => {
-  if (!content.trim()) return;
-  const data = {
-    content,
-    user_id: getUserId(),
-    images: uploadedImages.length ? JSON.stringify(uploadedImages) : "[]",
-  };
-  try {
-    const res = await create(data); // 发布帖子
-    if (selectedTopicId) { // 如果选择了话题
-      // 绑定帖子和话题
-      const binddata = {
-        post_id: res.post_id,
-        topic_id: selectedTopicId,
-      };
-      await bindTopic(binddata);
+  // 处理发帖提交
+  const handlePostSubmit = async () => {
+    if (!content.trim()) return;
+    const data = {
+      content,
+      user_id: getUserId(),
+      images: uploadedImages.length ? JSON.stringify(uploadedImages) : "[]",
+    };
+    try {
+      const res = await create(data); // 发布帖子
+      if (selectedTopicId) {
+        // 如果选择了话题
+        // 绑定帖子和话题
+        const binddata = {
+          post_id: res.post_id,
+          topic_id: selectedTopicId,
+        };
+        await bindTopic(binddata);
+      }
+      setContent(""); // 清空内容
+      setFileList([]); // 清空图片列表
+      getPost(); // 刷新帖子列表
+
+      Toast.success("Post created successfully!");
+    } catch (error) {
+      console.error("Failed to create post:", error);
     }
-    setContent(""); // 清空内容
-    setFileList([]); // 清空图片列表
-    getPost(); // 刷新帖子列表
-   
-    Toast.success("Post created successfully!");
-  } catch (error) {
-    console.error("Failed to create post:", error);
-  }
-};
+  };
 
   // 处理图片列表变化
   const handleImageChange = ({ fileList: newFileList }) => {
@@ -171,6 +172,18 @@ const handlePostSubmit = async () => {
     setSelectedTopicId(topicId); // 更新选中的话题
     setSelectedTopicName(topicName); // 更新选中的话题名称
     setShowTopicSelect(false); // 关闭话题选择
+  };
+
+  // 图片上传 七牛云
+  const handleUpload = async (file) => {
+    uploadFile(file, (res, err) => {
+      if (err) {
+        Toast.error(err);
+      } else {
+        Toast.success(res.message);
+        setUploadedImages([...uploadedImages, res.file_path]);
+      }
+    });
   };
 
   return (
@@ -223,7 +236,10 @@ const handlePostSubmit = async () => {
           <div className={styles.leftActions}>
             {/* 图片上传 */}
             <Upload
-              action={`${import.meta.env.VITE_SERVER_URL}/wallpaper/upload`}
+              action={""}
+              customRequest={({ file }) => {
+                handleUpload(file);
+              }}
               name="file"
               showUploadList={false}
               accept="image/*"
@@ -300,8 +316,16 @@ const mediumProps = {
   colors: ["#9A0023", "#FF003C", "#AF739B", "#FAC7F3", "#F7DBF4"],
 };
 // three
-const Post = ({ id, topics, user, content, likes, comments, images, getPost }) => {
- 
+const Post = ({
+  id,
+  topics,
+  user,
+  content,
+  likes,
+  comments,
+  images,
+  getPost,
+}) => {
   const [showComments, setShowComments] = useState(false);
   const [newComment, setNewComment] = useState("");
   // 点赞的状态,用于及时更新点赞数量, 默认状态为数据库返回的结果比对
@@ -438,29 +462,45 @@ const Post = ({ id, topics, user, content, likes, comments, images, getPost }) =
   return (
     <Card className={styles.post}>
       <Space align="start" className={styles.postMain}>
-        <Avatar src={user.image} onClick={() => goToUserPage(user.id)} />
+        <Avatar
+          src={user.image}
+          className={styles.avatar}
+          onClick={() => goToUserPage(user.id)}
+        />
         <div className={styles.postContent}>
           {/* user info */}
           <Space>
             <Text strong>{user.username}</Text>
-            <Text type="tertiary">@{user.email}</Text>
+            <Text type="tertiary" className={styles.email}>
+              @{user.email}
+            </Text>
             <Text type="tertiary">· {new Date().toLocaleDateString()}</Text>
           </Space>
           {/* post content */}
-          <Text className={styles.content}>{topics && topics.map((content, index) => <Tag key={index} color="blue" className={styles.topicTag}>{"# "+content.topic_name}</Tag>)}{content}</Text>
+          <Text className={styles.content}>
+            {topics &&
+              topics.map((content, index) => (
+                <Tag
+                  key={index}
+                  color="blue"
+                  className={styles.topicTag}
+                  onClick={() => navigate(`/topic/${content.topic_id}`)}
+                >
+                  {"# " + content.topic_name}
+                </Tag>
+              ))}
+            {content}
+          </Text>
           {/* post images */}
           <div className={styles.ImageContainer}>
-            {images &&
-              JSON.parse(
-                images.replace(/'/g, '"').replace(/\n/g, "").trim()
-              ).map((url, index) => (
-                <Image
-                  width={180}
-                  key={index}
-                  src={url}
-                  className={styles.postImage}
-                />
-              ))}
+            {JSON.parse(images).map((url, index) => (
+              <Image
+                width={180}
+                key={index}
+                src={url}
+                className={styles.postImage}
+              />
+            ))}
           </div>
           {/* post actions */}
           <Space className={styles.actions}>
@@ -506,21 +546,24 @@ const Post = ({ id, topics, user, content, likes, comments, images, getPost }) =
               />
             )}
           </Space>
-        </div>
 
-        <div className={styles.avatarGroup}>
-          <div className={styles.likeCount}>{likes.length}</div>
-          {likes.length > 0 && (
-            <AvatarGroup size="small" maxCount={5}>
-              {likes.map((like) => (
-                <Avatar
-                  key={like.user_id}
-                  size="small"
-                  src={like && like.user.image}
-                />
-              ))}
-            </AvatarGroup>
-          )}
+          <div className={styles.avatarGroup}>
+            {likes.length > 0 && (
+              <AvatarGroup size="small" maxCount={5}>
+                {likes.map((like) => (
+                  <Avatar
+                    key={like.user_id}
+                    size="small"
+                    className={styles.likeAvatar}
+                    src={like && like.user.image}
+                  />
+                ))}
+              </AvatarGroup>
+            )}
+            {likes.length > 0 && (
+              <span className={styles.likeCount}>等{likes.length}人觉得很赞</span>
+            )}
+          </div>
         </div>
       </Space>
 

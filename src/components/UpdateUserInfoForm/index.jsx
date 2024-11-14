@@ -12,33 +12,13 @@ import { useState } from "react";
 import { IconCamera } from "@douyinfe/semi-icons";
 import { bind_avatar, update_userInfo } from "@/apis/user";
 import { useUserStore } from "@/store";
+import * as qiniu from "qiniu-js";
 import "./index.css";
 
 export const UpdateUserInfoForm = ({ visible, afterClose, onCancel }) => {
   const { userInfo, setUserInfo } = useUserStore();
-  const [url, setUrl] = useState(userInfo.image);
-
-  // 上传头像
-  const onSuccess = async (response, file) => {
-    // 上传成功
-    if (response.code == 200) {
-      Toast.success(response.message);
-      setUrl(response.image_url);
-    }
-  };
-
-  // 绑定头像
-  const bindAvatar = async () => {
-    const res = await bind_avatar(userInfo.user_id, url);
-    if (res.code == 200) {
-      Toast.success(res.message);
-      // 更新 Zustand store 和本地存储
-      setUserInfo({ ...userInfo, image: url });
-    }
-  };
-
   // 表单提交
-  const handleSubmit = (values) => {
+  const handleSubmit = async (values) => {
     update_userInfo(
       userInfo.user_id,
       values.nickname,
@@ -51,8 +31,6 @@ export const UpdateUserInfoForm = ({ visible, afterClose, onCancel }) => {
     ).then((res) => {
       if (res.code == 200) {
         Toast.success(res.message);
-        // 同时记得绑定头像
-        bindAvatar();
         // 更新 Zustand store 和本地存储
         setUserInfo({ ...userInfo, ...values });
         // 当都完成之后, 进行model关闭
@@ -61,24 +39,7 @@ export const UpdateUserInfoForm = ({ visible, afterClose, onCancel }) => {
     });
   };
 
-  const style = {
-    backgroundColor: "var(--semi-color-overlay-bg)",
-    height: "100%",
-    width: "100%",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    color: "var(--semi-color-white)",
-  };
 
-  const hoverMask = (
-    <div style={style}>
-      <IconCamera />
-    </div>
-  );
-
-  const api = `${import.meta.env.VITE_SERVER_URL}/user/upload_avatar`;
-  let imageOnly = "image/*";
 
   return (
     <>
@@ -94,23 +55,7 @@ export const UpdateUserInfoForm = ({ visible, afterClose, onCancel }) => {
         maskClosable={false}
         style={{ padding: 20 }}
       >
-        {/* S头像上传组件 */}
-        <Upload
-          className="avatar-upload"
-          name="avatar"
-          action={api}
-          onSuccess={onSuccess}
-          accept={imageOnly}
-          showUploadList={false}
-          onError={() => Toast.error("上传失败")}
-        >
-          <Avatar
-            src={url}
-            style={{ margin: 4 }}
-            size="large"
-            hoverMask={hoverMask}
-          />
-        </Upload>
+        
         {/* 信息输入表单 */}
         <Form
           initValues={{

@@ -106,7 +106,7 @@ const TrendingPanel = () => {
           <List
             dataSource={hotUsers}
             renderItem={(data) => (
-              <List.Item className={styles.suggestionItem}>
+              <List.Item className={styles.suggestionItem} onClick={() => navigate(`/user/${data.user.id}`)}>
                 <Space>
                   <img
                     src={data.user.image}

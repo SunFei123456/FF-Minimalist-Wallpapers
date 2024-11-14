@@ -18,6 +18,7 @@ import {
   IconPlus,
   IconImage,
   IconHome,
+  IconCamera,
   IconMale,
   IconIdCard,
   IconCalendar,
@@ -32,13 +33,15 @@ import {
   get_user_collects,
   get_user_info,
   modify_background,
+  bind_avatar,
 } from "@/apis/user";
 
 import { useUserStore } from "@/store";
 import { useNavigate } from "react-router-dom";
 import { Toast } from "@douyinfe/semi-ui";
 import Loading from "@/components/Loading";
-
+import * as qiniu from "qiniu-js";
+import { getUserAvatar, uploadFile } from "@/utils";
 export default function Self() {
   // 获取路由参数
   const { id } = useParams();
@@ -145,7 +148,6 @@ export default function Self() {
     modify_background(curId, bgurl).then((res) => {
       if (res.code == 200) {
         Toast.success(res.message);
-
         setuserInfoData({ ...userInfo, person_home_background_image: bgurl });
         // 更新 Zustand store 和本地存储
         setUserInfo({ ...userInfo, person_home_background_image: bgurl });
@@ -153,10 +155,6 @@ export default function Self() {
     });
   };
 
-  // 上传成功之后的回调
-  const uploadSuccess = (res) => {
-    changeImageOfPersonalCenter(res.file_path);
-  };
   useEffect(() => {
     getInFobyID();
     getmyUploadsimageList();
@@ -166,7 +164,50 @@ export default function Self() {
     return <Loading />;
   }
 
+  // 背景图片上传更换
+  const handleUpload = async (file) => {
+    await uploadFile(file, (res, err) => {
+      if (err) {
+        Toast.error(err);
+      } else {
+        Toast.success(res.message);
+        changeImageOfPersonalCenter(res.file_path);
+      }
+    });
+  };
+  // 个人头像上传更换
+  const handleUploadAvatar = async (file) => {
+    await uploadFile(file, (res, err) => {
+      if (err) {
+        Toast.error(err);
+      } else {
+        bind_avatar(curId, res.file_path).then((res) => {
+          if (res.code == 200) {
+            Toast.success(res.message);
+            setuserInfoData({ ...userInfo, image: res.image_url });
+            // 更新 Zustand store 和本地存储
+            setUserInfo({ ...userInfo, image: res.image_url });
+          }
+        });
+      }
+    });
+  };
 
+  const style = {
+    backgroundColor: "var(--semi-color-overlay-bg)",
+    height: "100%",
+    width: "100%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    color: "var(--semi-color-white)",
+  };
+
+  const hoverMask = (
+    <div style={style}>
+      <IconCamera />
+    </div>
+  );
   let imageOnly = "image/*";
   return (
     <div className={SelfStyle.self}>
@@ -174,23 +215,47 @@ export default function Self() {
       <div
         className={SelfStyle.top}
         style={{
-          backgroundImage: `url(${userInfo.person_home_background_image.replace(
-            /\\/g,
-            "/"
-          )})`,
+          backgroundImage: `url(${
+            userInfo.person_home_background_image ||
+            "http://cdn.sunfei.site/default_banner.jpg?e=1731476905&token=bpQYWtWruTnQAFlTKde4wbgCZ7H9FjqQignA-Myl:DJ3UTth3siE0F6vfZPU163l35T8="
+          })`,
         }}
       >
         <div className={SelfStyle.userInfo}>
           {/* 用户头像 */}
-          <Avatar
-            size="extra-large"
-            style={{ margin: 4 }}
-            alt="User"
-            src={userInfo.user_avatar}
-          ></Avatar>
+          {/* S头像上传组件 */}
+          {id == curId ? (
+            <Upload
+              action={""}
+              className="avatar-upload"
+              name="avatar"
+              customRequest={({ file }) => {
+                handleUploadAvatar(file);
+              }}
+              accept={imageOnly}
+              showUploadList={false}
+              onError={() => Toast.error("上传失败")}
+            >
+              <Avatar
+                src={getUserAvatar()}
+                size="extra-large"
+                shape="circle"
+                type="light"
+                hoverMask={hoverMask}
+              />
+            </Upload>
+          ) : (
+            <Avatar
+              src={ userInfo.user_avatar}
+              size="extra-large"
+              shape="circle"
+              type="light"
+            />
+          )}
+
           {/* 个人nickname */}
           <Title heading={4} style={{ margin: "8px 0", color: "#fff" }}>
-            {userInfo.user_nickname || "暂无昵称"}
+            {userInfo.user_nickname || `user${id}`}
           </Title>
 
           {/* 用户信息 */}
@@ -396,7 +461,10 @@ export default function Self() {
       {/* 壁纸更换-> 只有当前用户才显示,访问者不显示 */}
       {id == curId && (
         <Upload
-          action={`${import.meta.env.VITE_SERVER_URL}/wallpaper/upload`}
+          action={""}
+          customRequest={({ file }) => {
+            handleUpload(file);
+          }}
           fileName="file"
           accept={imageOnly}
           maxSize={10240}
@@ -406,8 +474,6 @@ export default function Self() {
           onSizeError={(file, fileList) =>
             Toast.error(`${file.name} 文件尺寸不符合要求`)
           }
-          // 上传成功
-          onSuccess={uploadSuccess}
         >
           <IconPlus size="small" className={SelfStyle.uploadBgImage} />
         </Upload>

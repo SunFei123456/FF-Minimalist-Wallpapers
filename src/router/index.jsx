@@ -4,7 +4,7 @@ import Home from "@/pages/Home";
 import Wallpaper from "@/pages/Wallpaper";
 import Detail from "@/pages/Detail";
 
-import { createBrowserRouter } from "react-router-dom";
+import { createHashRouter } from "react-router-dom";
 import UploadWallpaper from "@/pages/Upload";
 
 import Self from "@/pages/Self";
@@ -14,7 +14,7 @@ import NotFound from "@/components/Error/NotFound";
 import TopicDetail from "@/pages/TopicDetail";
 import ProgressPage from "@/pages/ProgressPage";
 
-const router = createBrowserRouter([
+const router = createHashRouter([
   {
     path: "/",
     element: <Layout />,

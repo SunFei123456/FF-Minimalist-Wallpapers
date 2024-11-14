@@ -81,6 +81,15 @@ const progressDataList = [
             { text: "优化多次细节体验", completed: true },
             { text: "调整路由模式()", completed: true },
         ]
+    },
+    {
+        date: "2024/11/13",
+        tasks: [
+            { text: "前端进行修复吧, 新用户注册后,个人主页的背景图先展示我给他预定好的,然后后续再让他更改就好了", completed: true },
+            { text: "修复项目上线后的bug", completed: true },
+            { text: "优化多次细节体验", completed: true },
+            { text: "调整路由模式()", completed: true },
+        ]
     }
 ];
 

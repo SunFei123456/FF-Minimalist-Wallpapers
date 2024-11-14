@@ -10,7 +10,7 @@ import axios from "axios";
 const request = axios.create({
   // 使用环境变量
   baseURL: import.meta.env.VITE_SERVER_URL,
-  timeout: 3000,
+  timeout: 50000,
 });
 
 

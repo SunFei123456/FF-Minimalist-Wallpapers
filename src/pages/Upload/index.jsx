@@ -7,7 +7,7 @@ import {
   Select,
   Descriptions,
 } from "@douyinfe/semi-ui";
-import { IconPlus, IconArrowUp } from "@douyinfe/semi-icons";
+import { IconPlus } from "@douyinfe/semi-icons";
 import React from "react";
 import UploadPageStyle from "./index.module.css";
 import { useState } from "react";
@@ -15,14 +15,13 @@ import { save } from "@/apis/wallpaper";
 import { useNavigate } from "react-router-dom";
 import { getAllTags } from "@/apis/tag";
 import { useEffect } from "react";
-import { useUserStore } from '@/store/index'
-
+import { useUserStore } from "@/store/index";
+import { uploadFile } from "@/utils";
 
 export default function UploadWallpaper() {
-  const { Option } = Form.Select;
-  const action = `${import.meta.env.VITE_SERVER_URL}/wallpaper/upload`;
   const navigate = useNavigate();
-  const {userInfo} = useUserStore()
+  const { Option } = Form.Select;
+  const { userInfo } = useUserStore();
   // 定义一个state用来存储所有的标签
   const [tags, setTags] = useState([]);
 
@@ -37,11 +36,7 @@ export default function UploadWallpaper() {
   });
   // 图片指标的信息
   const [data, setData] = useState([
-    { key: "分辨率", value: "???" },
-    {
-      key: "内存大小",
-      value: "???",
-    },
+    { key: "内存大小", value: "???" },
     { key: "色彩模式", value: "???" },
   ]);
   // 指标样式
@@ -54,20 +49,15 @@ export default function UploadWallpaper() {
   };
   // 上传成功之后的回调
   const uploadSuccess = (res) => {
-    console.log(res);
     const newData = [...data];
-    newData[0].value = `${res.width}*${res.height}`; // 分辨率
-    newData[1].value = `${(res.file_size / 1024 / 1024).toFixed(2)}mb`; // 内存大小
-    newData[2].value = res.mode; // 色彩模式
+    newData[0].value = `${res.file_size}`; // 内存大小
+    newData[1].value = res.mode; // 色彩模式
     // 设置图片指标信息
     setData(newData);
     setFormValues({
       url: res.file_path,
       type: res.file_type,
       file_size: res.file_size,
-      width: res.width,
-      height: res.height,
-
       // 记住这里, 后面完善了用户模块, 来进行修改  5/22ok ✅
       create_by: userInfo.user_id,
     });
@@ -77,15 +67,16 @@ export default function UploadWallpaper() {
   const handleSubmit = (values) => {
     // 合并
     const newValues = { ...formValues, ...values };
-    save({ ...newValues }).then((res) => {
-      if (res.code === 200) {
-        Toast.success("上传成功");
-        // 跳转页面
-        navigate("/upload/success");
-      }
-    }).catch((err) => {
-      Toast.error(err.error);
-    });
+    save({ ...newValues })
+      .then((res) => {
+        if (res.code === 200) {
+          Toast.success("上传成功");
+          navigate(`/user/${userInfo.user_id}`);
+        }
+      })
+      .catch((err) => {
+        Toast.error(err.error);
+      });
   };
 
   // 获取所有标签
@@ -96,6 +87,20 @@ export default function UploadWallpaper() {
   useEffect(() => {
     getTags();
   }, []);
+
+
+  // 上传图片
+  const handleUpload = async (file) => {
+    uploadFile(file, (res, err)=>{
+      if (err) {
+        Toast.error(err);
+      } else {
+        Toast.success("图片上传成功,请继续完善相关信息");
+        uploadSuccess(res);
+      }
+    });
+
+  };
   return (
     <>
       <div className={UploadPageStyle.upload}>
@@ -103,7 +108,11 @@ export default function UploadWallpaper() {
           {/* 左边image盒子  用来上传回显*/}
           <div className={UploadPageStyle.left}>
             <Upload
-              action={action}
+              action={""}
+              // 自定义上传逻辑
+              customRequest={({ file }) => {
+                handleUpload(file);
+              }}
               listType="picture"
               // 同input name属性
               fileName="file"
@@ -113,12 +122,9 @@ export default function UploadWallpaper() {
               limit={1}
               picWidth={400}
               picHeight={250}
-         
               onSizeError={(file, fileList) =>
                 Toast.error(`${file.name} 文件尺寸不符合要求`)
               }
-              // 上传成功
-              onSuccess={uploadSuccess}
             >
               <IconPlus size="extra-large" style={{ margin: 4 }} />
               点击添加图片
@@ -154,13 +160,13 @@ export default function UploadWallpaper() {
                     label={{ text: "分类" }}
                     style={{ width: "100%" }}
                     placeholder="选择分类"
-
                   >
                     {tags.reverse().map((item) => (
-                      <Option key={item.id} value={item.id}>{item.name}</Option>
+                      <Option key={item.id} value={item.id}>
+                        {item.name}
+                      </Option>
                     ))}
                   </Form.Select>
-
 
                   <br />
                   <br />

@@ -36,6 +36,7 @@ import {
 import { getUserAvatar, getUserId } from "@/utils";
 import { IconSend } from "@douyinfe/semi-icons";
 import Loading from "@/components/Loading";
+import { Toast } from "@douyinfe/semi-ui";
 
 const { Text } = Typography;
 function PostImages({ images }) {
@@ -268,8 +269,8 @@ function TopicDetail() {
           <div className={styles.topicDescription}>
             <p>{topic.description}</p>
             <div className={styles.actionButtons}>
-              <button className={styles.primaryButton}>参与话题</button>
-              <button className={styles.secondaryButton}>分享话题</button>
+              <button className={styles.primaryButton} onClick={() => { Toast.warning("暂未开发,敬请期待") }}>参与话题</button>
+              <button className={styles.secondaryButton} onClick={() => { Toast.warning("暂未开发,敬请期待") }}>分享话题</button>
             </div>
           </div>
 

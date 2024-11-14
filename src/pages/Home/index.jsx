@@ -100,23 +100,22 @@ const Home = () => {
               <Button theme="solid" type="primary" icon={<IconArrowRight />} size="large">
                 开始探索
               </Button>
-              <Button icon={<IconGithubLogo />} size="large">
+              <Button icon={<IconGithubLogo />} size="large" onClick={()=> window.open('https://github.com/SunFei123456/FF-Minimalist-Wallpapers', '_blank')}>
                 GitHub
               </Button>
             </div>
           </div>
           <div className={styles.heroParallax} ref={sceneRef}>
             <div data-depth="0.2" className={styles.layer}>
-              <img src="https://images.unsplash.com/photo-1579546929518-9e396f3cc809" alt="Background" />
+              <img src="http://cdn.sunfei.site/photo-1579546929518-9e396f3cc809.jpg?e=1731561799&token=bpQYWtWruTnQAFlTKde4wbgCZ7H9FjqQignA-Myl:Iw_038Gk6ecnaNfV7Cv-KdxW7NE=" alt="Background" />
             </div>
-            <div data-depth="0.4" className={styles.layer}>
+            <div data-depth="0.4"  className={styles.layer}>
               <div className={styles.floatingCard}>
-                <IconStar /> 4.9 评分
               </div>
             </div>
             <div data-depth="0.6" className={styles.layer}>
               <div className={styles.floatingCard}>
-                <IconDownload /> 10K+ 下载
+              <IconStar /> FF 极简壁纸
               </div>
             </div>
           </div>

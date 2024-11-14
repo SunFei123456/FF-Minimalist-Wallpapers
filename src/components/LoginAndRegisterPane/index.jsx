@@ -3,7 +3,7 @@ import { Tabs, TabPane, Modal, Button ,Form,Tooltip,Toast } from "@douyinfe/semi
 import { IconFile, IconGlobe, IconHelpCircle } from "@douyinfe/semi-icons";
 import {register,login} from '@/apis/user'
 import { useUserStore} from '@/store/index'
-export default function LoginAndRegisterPane({visible,hideModal}) {
+export default function LoginAndRegisterPane({visible,hideModal,setIsLogin}) {
 
   const {setUserInfo,userInfo} = useUserStore();
  
@@ -15,6 +15,7 @@ export default function LoginAndRegisterPane({visible,hideModal}) {
       if (res.code == 200) {
         Toast.success('登录成功');
         localStorage.setItem('token',res.access_token);
+        setIsLogin(true);
         setUserInfo(res.data)
         hideModal();
       }

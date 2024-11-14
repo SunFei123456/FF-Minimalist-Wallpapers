@@ -338,15 +338,13 @@ export default function Detail() {
           <Card title="图片详细信息" className={DetailStyle.right}>
             <div className={DetailStyle.ImageDetailContent}>
               <span>图片名称: {picDetail.name}</span>
-              <span>图片分辨率：{picDetail.dimensions}</span>
               <span>上传者: {userCurrentInfo.user_nickname}</span>
               <span>上传时间: {picDetail.create_time}</span>
-              <span>图片类型: {picDetail.type}</span>
               <span>图片描述: {picDetail.alt}</span>
               <span>
                 壁纸大小:
                 <Tag size="small" shape="circle" color="amber">
-                  {`${picDetail.file_size_mb}mb`}
+                  {`${picDetail.file_size}`}
                 </Tag>
               </span>
             </div>

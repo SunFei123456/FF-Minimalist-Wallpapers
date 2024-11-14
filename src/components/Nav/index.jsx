@@ -11,19 +11,13 @@ import { Button } from "@douyinfe/semi-ui";
 import { useUserStore } from "@/store";
 import { Toast } from "@douyinfe/semi-ui";
 export default function Nav({ onLanguageChange }) {
-  const [isDark, setIsDark] = useState(true);
-  // 搜索关键字
-  const [keyword, setKeyword] = useState("");
   const navigator = useNavigate();
-
+  const [isDark, setIsDark] = useState(true);
   const [visible, setVisible] = useState(false);
-
   const { userInfo } = useUserStore();
+  const [ isLogin, setIsLogin ] = useState(userInfo.user_id!== null);
 
-  const avatar = {
-    default: "https://www.douyin.com/aweme/v1/avatar/1170000000000000000/",
-    cur: userInfo.image,
-  };
+  
 
 
   // 加载页面时检查 localStorage 中的主题模式
@@ -52,7 +46,6 @@ export default function Nav({ onLanguageChange }) {
     }
   };
 
-
   // 点击菜单路由跳转
   const menuClick = (key) => {
       navigator(key, { replace: true });
@@ -62,7 +55,6 @@ export default function Nav({ onLanguageChange }) {
       }
   };
   
-
 
   const showModal = () => {
     setVisible(true);
@@ -74,6 +66,7 @@ export default function Nav({ onLanguageChange }) {
 
   // 退出登录
   const logout = () => {
+    setIsLogin(false);
     menuClick("/");
     // 清空store中的用户信息
     useUserStore.setState({
@@ -84,8 +77,6 @@ export default function Nav({ onLanguageChange }) {
     // 清除localStorage中的token
     localStorage.removeItem("token");
     Toast.success("退出登录成功");
-    // 跳转到首页
-  
   };
   return (
     <>
@@ -131,7 +122,7 @@ export default function Nav({ onLanguageChange }) {
           </div>
 
           {/* 用户头像 */}
-          {userInfo && userInfo.email ? (
+          {isLogin ? (
             <Dropdown
               trigger={"click"}
               position={"bottomLeft"}
@@ -153,11 +144,10 @@ export default function Nav({ onLanguageChange }) {
               <Avatar
                 alt="cute cat"
                 size="small"
-                src={userInfo.image === null ? avatar.default : avatar.cur}
+                src={userInfo.image}
                 color="red"
                 style={{ margin: 4 }}
               >
-                User
               </Avatar>
             </Dropdown>
           ) : (
@@ -175,6 +165,7 @@ export default function Nav({ onLanguageChange }) {
       <LoginAndRegisterPane
         visible={visible}
         hideModal={hideModal}
+        setIsLogin={setIsLogin}
       ></LoginAndRegisterPane>
     </>
   );
